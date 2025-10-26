@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 // import cors from "cors";
 import API_BASE_URL from './consts.js';
 
-const PlacesDropdown = () => {
+const PlaceSelect = ({ onValueChanged }) => {
     const [places, setPlaces] = useState([]);
     const [selectedPlace, setSelectedPlace] = useState('');
     const [loading, setLoading] = useState(false);
@@ -29,23 +29,28 @@ const PlacesDropdown = () => {
         fetchPlaces();
     }, []);
 
-    const handleSelectChange = (event) => {
-        setSelectedPlace(event.target.value);        
+    const onChanged = (event) => {
+        const value = event.target.value;
+        setSelectedPlace(value);
+        if (onValueChanged) {
+            onValueChanged(value);
+        }
     };
 
     if (loading) return <div>Loading places...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="dropdown-container">
+        <div className="select-container">
             <label htmlFor="places-dropdown">Select a place: </label>
             <select
                 id="places"
                 value={selectedPlace}
-                onChange={handleSelectChange}
-                className="vcl"
+                onChange={onChanged}
+
             >
-                {/* <option value="">-- Select a place --</option> */}
+                <option value="" disabled hidden>Valitse paikan</option>
+
                 {places.map((place) => (
                     <option key={place.place_id} value={place.place_id}>
                         {place.name}
@@ -53,9 +58,9 @@ const PlacesDropdown = () => {
                 ))}
             </select>
 
-            
+
         </div>
     );
 };
 
-export default PlacesDropdown;
+export default PlaceSelect;
