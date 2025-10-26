@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 
 
-const ColorSelect = ({ onValueChanged }) => {
+const ColorSelect = ({ onValueChanged, style }) => {
     const [color, setColor] = useState(0);
 
     const selector_data = [
@@ -65,6 +65,7 @@ const ColorSelect = ({ onValueChanged }) => {
             <select
                 class="custom-select"
                 onChange={onChanged}
+                style={style}
             >
                 {selector_data.map((data) => (
                     <option key={data.id} value={data.id}>

@@ -11,7 +11,7 @@ function isFloatString(str) {
     return float_regex.test(str)
 }
 
-const NumInput = ({ allowFloat, className, onChanged }) => {
+const NumInput = ({ allowFloat, className, style, onChanged }) => {
     const [value, setValue] = useState([]);
     const [ErrorClass, setErrorClass] = useState('');
     // const [error, setError] = useState('');
@@ -44,11 +44,10 @@ const NumInput = ({ allowFloat, className, onChanged }) => {
                 value={value}
                 onChange={inputChanged}
                 // className="{className} {ErrorClass}"
-                className={`${className || ''} ${ErrorClass || ''}`} 
+                className={`${className || ''} ${ErrorClass || ''}`}
+                style={style}
             />
-            <p>{value}</p>
-            <p>{isIntString(value)}</p>
-            <p>{isFloatString(value)}</p>
+           
         </>
     );
 };

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 
 
-const ModeSelect = ({ onValueChanged }) => {
+const ModeSelect = ({ onValueChanged,style }) => {
     const [mode, setMode] = useState(0);
 
 
@@ -39,15 +39,7 @@ const ModeSelect = ({ onValueChanged }) => {
         setMode(value);
         if (onValueChanged)
             onValueChanged(value);
-        /* const selectedId = event.target.value;
-         const selectedPlaceObj = places.find(place => place.place_id === selectedId);
-
-        setSelectedPlace(selectedId);
-
-        
-        if (onValueChanged && selectedPlaceObj) {
-            onValueChanged(selectedId);
-        }*/
+     
     };
 
 
@@ -57,6 +49,7 @@ const ModeSelect = ({ onValueChanged }) => {
             <select
                 class="custom-select"
                 onChange={onChanged}
+                style={style}
             >
                 {selector_data.map((data) => (
                     <option key={data.id} value={data.id}>

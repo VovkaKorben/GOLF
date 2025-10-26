@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-// import cors from "cors";
 import API_BASE_URL from './consts.js';
 
-const PlaceSelect = ({ onValueChanged }) => {
+const PlaceSelect = ({ onValueChanged, className }) => {
     const [places, setPlaces] = useState([]);
     const [selectedPlace, setSelectedPlace] = useState('');
     const [loading, setLoading] = useState(false);
@@ -37,29 +36,42 @@ const PlaceSelect = ({ onValueChanged }) => {
         }
     };
 
-    if (loading) return <div>Loading places...</div>;
-    if (error) return <div>Error: {error}</div>;
+    // if (loading) return <div>Loading places...</div>;
+    // if (error) return <div>Error: {error}</div>;
+
+    let content;
+    if (loading) content = <option value="">Loading...</option>;
+    else if (error) content = <option value="" > Failed to load places</option>;
+    else content = (
+        <>
+            <option value="" disabled hidden>Select game place:</option>
+            {places.map((place) => (
+                <option key={place.place_id} value={place.place_id}>
+                    {place.name}
+                </option>
+            ))}
+        </>
+    );
 
     return (
-        <div className="select-container">
+        <div
+            className={`select-container ${className || ''}`}
+        >
             <label htmlFor="places-dropdown">Select a place: </label>
+
+
+
             <select
                 id="places"
                 value={selectedPlace}
                 onChange={onChanged}
-
+                disabled={error || loading}
             >
-                <option value="" disabled hidden>Valitse paikan</option>
-
-                {places.map((place) => (
-                    <option key={place.place_id} value={place.place_id}>
-                        {place.name}
-                    </option>
-                ))}
-            </select>
+                {content}
+            </select >
 
 
-        </div>
+        </div >
     );
 };
 

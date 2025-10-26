@@ -1,11 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Tomorrow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Tomorrow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 body, input[type="text"] {
-  font-family: "Tomorrow", sans-serif;
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+  font-variation-settings:
+    "wdth"100;
 
-  text-rendering: geometricPrecision;
+  /* text-rendering: geometricPrecision; */
 }
 
 body {
@@ -103,18 +107,26 @@ tr.other {
 }
 
 
+button {
+  width: 100px;
+  height: 70px;
+}
 
 .select-container {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  max-width: 200px;
+  /* gap: 6px; */
+  max-width: 300px;
+  min-width: 250px;
+  margin-top: 20px;
 }
 
 .select-container label {
   font-weight: 400;
   font-size: 12px;
   color: #2d3748;
+  margin-bottom: 3px;
+  margin-left: 12px;
   /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; */
 }
 
@@ -131,11 +143,11 @@ tr.other {
   height: 40px;
 }
 
-.select-container select:hover {
+.select-container select:hover, button:hover input[type="text"]:hover {
   border-color: #cbd5e0;
 }
 
-.select-container select:focus {
+.select-container select:focus, button:focus input[type="text"]:focus {
   outline: none;
   border-color: #4299e1;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
@@ -150,22 +162,29 @@ tr.other {
   align-items: center;
   align-content: stretch;
 }
-
-
-.l {
+.flex_col_left
+{
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: baseline;
+	align-content: stretch;
+}
+.large_text {
   font-size: 20px;
   font-weight: 400;
 }
 
-.g {
+.green_text {
   color: green;
 }
 
-.m {
+.margin_sides {
   margin-left: 10px;
   margin-right: 10px;
 }
 
-.w100 {
-  width: 50px;
+.mr {
+  margin-right: 30px;
 }

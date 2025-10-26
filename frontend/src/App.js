@@ -6,7 +6,8 @@ import PlaceSelect from "./PlaceSelect.js";
 import NumInput from './NumInput.js';
 import ColorSelect from './ColorSelect.js';
 import ModeSelect from './ModeSelect.js';
-
+import TextInput from './TextInput.js';
+import BtnSave from './BtnSave.js';
 
 export default function App() {
   useEffect(() => {
@@ -69,33 +70,44 @@ export default function App() {
     <>
 
 
-      <div className='grid-container'>
-        <h1>Golf</h1>
-
-        <div className='flex_left_center'>
-          <span className='l'>Exact HCP:</span>
+      <div className='flex_left_center'>
+        <div>
+          <span className='large_text'>Exact HCP:</span>
           <NumInput
-            className="m w100"
+            className="margin_sides"
+            style={{ width: "50px" }}
             allowFloat={true}
           />
-          <span className='l g'>Enter results and save card</span>
         </div>
+        <div className='large_text green_text'>Enter results and save card</div>
+      </div>
+      <hr />
+      <div className='flex_left_center'>
+        <PlaceSelect className="mr" onValueChanged={place_changed} />
+        <ModeSelect
+          onValueChanged={place_changed}
 
-        <div className='flex_left_center'>
-          <PlaceSelect onValueChanged={place_changed} />
-          <ModeSelect onValueChanged={place_changed} />
-        </div>
+        />
+      </div>
 
-        <ColorSelect onValueChanged={color_changed} />
-        {/* <div>tee placeholder</div> */}
+      <ColorSelect onValueChanged={color_changed}
+        style={{ width: "150px" }}
+      />
+      {/* <div>tee placeholder</div> */}
 
-        {renderTable(0)}
-        {renderTable(1)}
+      {renderTable(0)}
+      {renderTable(1)}
+      <div className='flex_left_center'>
+        <div className='flex_col_left'>
 
-
-        <div>comment placeholder</div>
-        <div>judge placeholder</div>
-        <div>button save placeholder</div>
+          <TextInput
+            caption="Comments"
+          />
+          <TextInput
+            caption="judge placeholder"
+          />
+        </div >
+        <BtnSave />
       </div >
     </>
   )
