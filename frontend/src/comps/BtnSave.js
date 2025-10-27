@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 
 
 const BtnSave = ({ onClicked, caption }) => {
-    const [value, setValue] = useState(0);
+
 
 
     const onClick = () => {
@@ -18,7 +18,7 @@ const BtnSave = ({ onClicked, caption }) => {
             onClick={onClick}
         >
             Save
-            </button>
+        </button>
 
     );
 };

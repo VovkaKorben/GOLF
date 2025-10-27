@@ -12,48 +12,7 @@ import BtnSave from './comps/BtnSave.js';
 export default function App() {
 
 
-  const col_first = ['REIKÄ', 'PITUUS', 'PAR', 'LYÖNNIT', 'HCP', 'NET.']
-  const col_last = [['ULOS', ''], ['SISÄÄN', 'YHT.']]
 
-  const renderTable = (tbl_index) => {
-
-    const rowsArray = [];
-
-    if (!tbl_index)
-      rowsArray.push(<tr className='hdr' ><td colSpan={12}>CR / SLOPE</td></tr>);
-
-    for (let r = 0; r <= 5; r++) {
-      const colsArray = [];
-      for (let c = 0; c <= 11; c++) {
-        let t;
-        // first column messages
-        if (c === 0)
-          t = col_first[r]
-        // trailing columns messages
-        else if (c >= 10 && r === 0)
-          t = col_last[tbl_index][c - 10]
-        // pit index
-        else if (r === 0)
-          t = tbl_index * 9 + c
-        // PAR
-        else if (r === 2 && c > 0 && c < 10)
-          t = 
-        // result input fields
-        else if (r === 3 && c > 0 && c < 10)
-          t =
-            <NumInput
-              className="square" allowFloat={false}
-              changed_callback={result_changed} tagname={tbl_index * 10 + c - 1}
-            />
-
-        
-        else t = '';
-        colsArray.push(<td key={c}>{t}</td>)
-      }
-      rowsArray.push(<tr className={r === 0 ? 'reika' : r === 2 ? 'par' : 'other'} key={r}>{colsArray}</tr>)
-    }
-    return <table className='r'><tbody>{rowsArray}</tbody></table>;
-  };
   const init_arr = () => {
     const obj = {};
     for (let i = 1; i <= 18; i++) obj[i] = null;
@@ -71,8 +30,8 @@ export default function App() {
   const [dbg, setDbg] = useState('');
 
   useEffect(() => {
-    console.log(hcp);
-    console.log(par);
+    //console.log(hcp);    console.log(par);
+    // setDbg(`PAR: ${JSON.stringify(par, undefined, 2)}, HCP: ${JSON.stringify(hcp, undefined, 2)}`);
   }, [hcp, par]);
 
   //  values onChange
@@ -102,7 +61,7 @@ export default function App() {
 
 
         //setPlaces(data);
-        setDbg(`PAR: ${JSON.stringify(par, undefined, 2)}, HCP: ${JSON.stringify(hcp, undefined, 2)}`);
+        // setDbg(`PAR: ${JSON.stringify(par, undefined, 2)}, HCP: ${JSON.stringify(hcp, undefined, 2)}`);
         //JSON.stringify(p, undefined, 2));
       }).catch(error => { setDbg(`Error: ${error.message}`); });
 
@@ -129,6 +88,50 @@ export default function App() {
         [pit_index]: value  // изменяем только нужный элемент
       }
     }));
+  };
+
+  const col_first = ['REIKÄ', 'PITUUS', 'PAR', 'LYÖNNIT', 'HCP', 'NET.']
+  const col_last = [['ULOS', ''], ['SISÄÄN', 'YHT.']]
+
+  const renderTable = (tbl_index) => {
+
+    const rowsArray = [];
+
+    if (!tbl_index)
+      rowsArray.push(<tr className='hdr' key='-1'><td colSpan={12}>CR / SLOPE</td></tr>);
+
+    for (let r = 0; r <= 5; r++) {
+      const colsArray = [];
+      for (let c = 0; c <= 11; c++) {
+        let t = '';
+        // first column messages
+        if (c === 0)
+          t = col_first[r]
+        // trailing columns messages
+        else if (c >= 10 && r === 0)
+          t = col_last[tbl_index][c - 10]
+        // pit index + values + edits
+        else if (c >= 1 && c <= 9) {
+          let pit_index = tbl_index * 9 + c
+          if (r === 0)
+            t = pit_index
+          else if (r === 2)
+            t = par[pit_index]
+          else if (r === 3)
+            t =
+              <NumInput
+                className="square" allowFloat={false}
+                changed_callback={result_changed} tagname={tbl_index * 10 + c - 1}
+              />
+          else if (r === 4)
+            t = hcp[pit_index]
+        }
+
+        colsArray.push(<td key={c}>{t}</td>)
+      }
+      rowsArray.push(<tr className={r === 0 ? 'reika' : r === 2 ? 'par' : 'other'} key={r}>{colsArray}</tr>)
+    }
+    return <table className='r'><tbody>{rowsArray}</tbody></table>;
   };
 
   return (
