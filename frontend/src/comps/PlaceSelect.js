@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import API_BASE_URL from './consts.js';
+import API_BASE_URL from '../consts.js';
 
-const PlaceSelect = ({ onValueChanged, className }) => {
+const PlaceSelect = ({ changed_callback, tagname, className }) => {
     const [places, setPlaces] = useState([]);
     const [selectedPlace, setSelectedPlace] = useState('');
     const [loading, setLoading] = useState(false);
@@ -28,12 +28,11 @@ const PlaceSelect = ({ onValueChanged, className }) => {
         fetchPlaces();
     }, []);
 
-    const onChanged = (event) => {
+    const onChange = (event) => {
         const value = event.target.value;
         setSelectedPlace(value);
-        if (onValueChanged) {
-            onValueChanged(value);
-        }
+        if (changed_callback)
+            changed_callback(tagname, value);
     };
 
     // if (loading) return <div>Loading places...</div>;
@@ -44,7 +43,7 @@ const PlaceSelect = ({ onValueChanged, className }) => {
     else if (error) content = <option value="" > Failed to load places</option>;
     else content = (
         <>
-            <option value="" disabled hidden>Select game place:</option>
+            <option value="" disabled hidden>Select</option>
             {places.map((place) => (
                 <option key={place.place_id} value={place.place_id}>
                     {place.name}
@@ -64,7 +63,7 @@ const PlaceSelect = ({ onValueChanged, className }) => {
             <select
                 id="places"
                 value={selectedPlace}
-                onChange={onChanged}
+                onChange={onChange}
                 disabled={error || loading}
             >
                 {content}

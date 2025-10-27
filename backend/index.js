@@ -29,17 +29,11 @@ const pool = mysql.createPool({
   reconnect: true
 });
 
-// Создаем APP объект глобально
+
 const app = express();
-//function init_app() {
-
 app.use(cors());
-
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
-
-
-
 
 const server = app.listen(API_PORT, () => {
   console.log(`💖 Golf API started on http://localhost:${API_PORT}`);
@@ -51,37 +45,7 @@ const server = app.listen(API_PORT, () => {
 app.get("/api/health", async (req, res) => {
   res.status(200).json({ status: "ok" });
 });
-/*
-app.get("/api/places", async (req, res) => {
-  connection.query(`SELECT * FROM places`,
-    function (err, result) {
-      if (err) {
-        console.log(`Error executing the query - ${err}`)
-        res.status(500).json({ error: err.message });
-      } else
-        res.status(200).json(result);
-    })
-});
-*/
 
-// GET /api/place/:place_id
-
-
-//}
-// Connecting to database
-/*connection.connect(function (err) {
-  if (err) {
-    console.log("⛔ MySQL connection error.")
-    console.log(err.message)
-    process.exit(1);
-  }
-  else {
-    console.log(`💖 MySQL Database Connected`)
-    init_app();
-
-  }
-})
-*/
 app.get("/api/places", async (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) {
@@ -99,6 +63,46 @@ app.get("/api/places", async (req, res) => {
 
       res.status(200).json(result);
     });
+  });
+});
+
+app.get("/api/place/:place_id", async (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log('⛔ Database connection error:', err.message);
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+
+    connection.query('SELECT * FROM places WHERE place_id=?', [req.params.place_id],
+      (err, result) => {
+        connection.release(); 
+
+        if (err) {
+          console.log(`Error executing the query - ${err}`);
+          return res.status(500).json({ error: err.message });
+        }
+
+        res.status(200).json(result);
+      });
+  });
+});
+app.get("/api/pits/:place_id", async (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log('⛔ Database connection error:', err.message);
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+    connection.query('SELECT pit_no,par,hcp FROM pits WHERE place_id=?', [req.params.place_id],
+      (err, result) => {
+        connection.release(); 
+
+        if (err) {
+          console.log(`Error executing the query - ${err}`);
+          return res.status(500).json({ error: err.message });
+        }
+
+        res.status(200).json(result);
+      });
   });
 });
 app.use(notFound);

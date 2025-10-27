@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 
 
-const TextInput = ({ onValueChanged,caption,style }) => {
-    const [value, setValue] = useState(0);
+const TextInput = ({ caption, style, changed_callback,tagname }) => {
+    const [value, setValue] = useState("");
 
 
 
@@ -14,12 +14,12 @@ const TextInput = ({ onValueChanged,caption,style }) => {
         // fetchPlaces();
     }, []);
 
-    const onChanged = (event) => {
+    const onChange = (event) => {
         const value = event.target.value;
         setValue(value);
-        if (onValueChanged)
-            onValueChanged(value);
-     
+        if (changed_callback)
+            changed_callback(tagname, value);
+
     };
 
 
@@ -28,8 +28,8 @@ const TextInput = ({ onValueChanged,caption,style }) => {
             <label htmlFor="color-dropdown">{caption}: </label>
             <input type="text"
                 value={value}
-                onChange={onChanged}
-               
+                onChange={onChange}
+placeholder="enter text here"
             />
 
         </div>

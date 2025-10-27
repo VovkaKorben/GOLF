@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 
 
-const ModeSelect = ({ onValueChanged,style }) => {
-    const [mode, setMode] = useState(0);
+const ModeSelect = ({ changed_callback, tagname, style }) => {
+    const [value, setValue] = useState("");
 
 
 
@@ -34,12 +34,12 @@ const ModeSelect = ({ onValueChanged,style }) => {
         // fetchPlaces();
     }, []);
 
-    const onChanged = (event) => {
-        const value = event.target.value;
-        setMode(value);
-        if (onValueChanged)
-            onValueChanged(value);
-     
+    const onChange = (event) => {
+        const new_value = event.target.value;
+        setValue(new_value);
+        if (changed_callback)
+            changed_callback(tagname, new_value);
+
     };
 
 
@@ -47,10 +47,12 @@ const ModeSelect = ({ onValueChanged,style }) => {
         <div className="select-container">
             <label htmlFor="color-dropdown">Select calculation mode: </label>
             <select
-                class="custom-select"
-                onChange={onChanged}
+
+                onChange={onChange}
                 style={style}
+                 value={value}
             >
+             <option value="" disabled hidden>Select</option>
                 {selector_data.map((data) => (
                     <option key={data.id} value={data.id}>
                         {data.caption}

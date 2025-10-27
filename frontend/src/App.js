@@ -1,19 +1,15 @@
 import './App.css';
 import React, { useEffect, useState } from "react";
-// Axios-kirjasto HTTP-pyyntöjen tekemiseen (GET/POST jne.)
-// import axios from "axios";
-import PlaceSelect from "./PlaceSelect.js";
-import NumInput from './NumInput.js';
-import ColorSelect from './ColorSelect.js';
-import ModeSelect from './ModeSelect.js';
-import TextInput from './TextInput.js';
-import BtnSave from './BtnSave.js';
+import API_BASE_URL from './consts.js';
+import PlaceSelect from "./comps/PlaceSelect.js";
+import NumInput from './comps/NumInput.js';
+import ColorSelect from './comps/TeeSelect.js';
+import ModeSelect from './comps/ModeSelect.js';
+import TextInput from './comps/TextInput.js';
+import GenderSelect from './comps/GenderSelect.js';
+import BtnSave from './comps/BtnSave.js';
 
 export default function App() {
-  useEffect(() => {
-    // fetchHealth();    fetchTopFlavors();
-  }, []);
-
 
 
   const col_first = ['REIKÄ', 'PITUUS', 'PAR', 'LYÖNNIT', 'HCP', 'NET.']
@@ -36,10 +32,21 @@ export default function App() {
         // trailing columns messages
         else if (c >= 10 && r === 0)
           t = col_last[tbl_index][c - 10]
+        // pit index
         else if (r === 0)
           t = tbl_index * 9 + c
-        else if (r === 3)
-          t = <input type='text' className='square' />
+        // PAR
+        else if (r === 2 && c > 0 && c < 10)
+          t = 
+        // result input fields
+        else if (r === 3 && c > 0 && c < 10)
+          t =
+            <NumInput
+              className="square" allowFloat={false}
+              changed_callback={result_changed} tagname={tbl_index * 10 + c - 1}
+            />
+
+        
         else t = '';
         colsArray.push(<td key={c}>{t}</td>)
       }
@@ -47,54 +54,118 @@ export default function App() {
     }
     return <table className='r'><tbody>{rowsArray}</tbody></table>;
   };
-
-  const [selectedPlaceId, setSelectedPlaceId] = useState('');
-  const [selectedPlaceName, setSelectedPlaceName] = useState('');
-
-  // Функция для обработки выбора места
-  const handlePlaceSelect = (placeId, placeName) => {
-    setSelectedPlaceId(placeId);
-    setSelectedPlaceName(placeName);
+  const init_arr = () => {
+    const obj = {};
+    for (let i = 1; i <= 18; i++) obj[i] = null;
+    return obj;
   };
 
-  const values_changed = () => {
-    // alert(value);
+
+  const [values, setValues] = useState({ 'pits': [] });
+  const [hcp, setHCP] = useState(init_arr);
+  const [par, setPAR] = useState(init_arr);
+
+
+
+  // const [valuesWarn, setvaluesWarn] = useState('');
+  const [dbg, setDbg] = useState('');
+
+  useEffect(() => {
+    console.log(hcp);
+    console.log(par);
+  }, [hcp, par]);
+
+  //  values onChange
+  useEffect(() => {
+    console.log('Values обновлены:', values);
+
+    // no place selected - return
+    if (!('place_id' in values))
+      return;
+
+    fetch(`${API_BASE_URL}pits/${values.place_id}`)
+      .then(response => response.json())
+      .then(data => {
+
+        // update HCP and PAR values
+        setHCP(data.reduce((acc, item) => {
+          acc[item.pit_no] = item.hcp;
+          return acc;
+        }, {}));
+
+
+        setPAR(data.reduce((acc, item) => {
+          acc[item.pit_no] = item.par;
+          return acc;
+        }, {}));
+
+
+
+        //setPlaces(data);
+        setDbg(`PAR: ${JSON.stringify(par, undefined, 2)}, HCP: ${JSON.stringify(hcp, undefined, 2)}`);
+        //JSON.stringify(p, undefined, 2));
+      }).catch(error => { setDbg(`Error: ${error.message}`); });
+
+    // check all required values exists
+    /*let missing_fields = required_values.filter(item => !(item.tagname in values)).map(item => item.caption).join(', ');
+    if (missing_fields.length) missing_fields = <>This field(s) required: <b>{missing_fields}</b></>
+    setvaluesWarn(missing_fields);*/
+  }, [values]);
+
+  // change global values
+  const values_changed = (tagname, value) => {
+    setValues(prevValues => ({
+      ...prevValues,
+      [tagname]: value
+    }));
   };
-  const color_changed = (value) => {
-    // alert(value);
+
+
+  const result_changed = (pit_index, value) => {
+    setValues(prevValues => ({
+      ...prevValues,
+      pits: {
+        ...prevValues.pits, // копируем все существующие pits
+        [pit_index]: value  // изменяем только нужный элемент
+      }
+    }));
   };
-  const place_changed = (value) => {
-    // alert(value);
-  };
+
   return (
     <>
 
-
       <div className='flex_left_center'>
-        <div>
-          <span className='large_text'>Exact HCP:</span>
-          <NumInput
-            className="margin_sides"
-            style={{ width: "50px" }}
-            allowFloat={true}
-          />
-        </div>
+        <span className='large_text'>Exact HCP:</span>
+        <NumInput
+          className="margin_sides" style={{ width: "50px" }} allowFloat={true}
+          changed_callback={values_changed} tagname="ehcp"
+          recalc="1"
+        />
+
         <div className='large_text green_text'>Enter results and save card</div>
       </div>
       <hr />
-      <div className='flex_left_center'>
-        <PlaceSelect className="mr" onValueChanged={place_changed} />
-        <ModeSelect
-          onValueChanged={place_changed}
 
+      <div className='flex_left_center'>
+        <PlaceSelect
+          className="mr"
+          changed_callback={values_changed} tagname="place_id"
+        />
+        <ModeSelect
+          changed_callback={values_changed} tagname="mode_id"
         />
       </div>
+      <div className='flex_left_center'>
+        <ColorSelect
+          changed_callback={values_changed} tagname="color_id"
+          style={{ width: "150px" }}
+        />
 
-      <ColorSelect onValueChanged={color_changed}
-        style={{ width: "150px" }}
-      />
-      {/* <div>tee placeholder</div> */}
-
+        <GenderSelect
+          changed_callback={values_changed} tagname="gender_id"
+          style={{ width: "150px" }}
+        />
+      </div>
       {renderTable(0)}
       {renderTable(1)}
       <div className='flex_left_center'>
@@ -102,13 +173,16 @@ export default function App() {
 
           <TextInput
             caption="Comments"
+            changed_callback={values_changed} tagname="comment"
           />
           <TextInput
             caption="judge placeholder"
+            changed_callback={values_changed} tagname="judge"
           />
         </div >
         <BtnSave />
       </div >
+      <pre className='dbg'> {dbg}</pre>
     </>
   )
 
