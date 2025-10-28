@@ -13,82 +13,40 @@ export default function App() {
 
 
 
-  const init_arr = () => {
-    const obj = {};
-    for (let i = 1; i <= 18; i++) obj[i] = null;
-    return obj;
-  };
 
+  const [xvalues, setXValues] = useState({});
+  const [xdata, setXData] = useState({});
 
-  const [values, setValues] = useState({ 'pits': [] });
-  const [data, setData] = useState({});
-
-  // const [hcp, setHCP] = useState(init_arr);
-  // const [par, setPAR] = useState(init_arr);
-  // const [tee, setTEE] = useState('');
-
-
+  useEffect(() => {
+    setDbg(`xvalues: ${JSON.stringify(xvalues, undefined, 2)}`);
+  }, [xvalues]);
+  useEffect(() => {
+    setDbg2(`xdata: ${JSON.stringify(xdata, undefined, 2)}`);
+  }, [xdata]);
 
   // const [valuesWarn, setvaluesWarn] = useState('');
   const [dbg, setDbg] = useState('');
-
-  useEffect(() => {
-    //console.log(hcp);    console.log(par);
-    // setDbg(`PAR: ${JSON.stringify(par, undefined, 2)}, HCP: ${JSON.stringify(hcp, undefined, 2)}`);
-  }, [hcp, par]);
-
-  //  values onChange
-  useEffect(() => {
-    console.log('Values обновлены:', values);
-
-    // no place selected - return
-    if (!('place_id' in values))
-      return;
-
-    // get pits info for selected place
-    fetch(`${API_BASE_URL}pits/${values.place_id}`)
-      .then(response => response.json())
-      .then(data => {
-        // update HCP and PAR values
-        setHCP(data.reduce((acc, item) => { acc[item.pit_no] = item.hcp; return acc; }, {}));
-        setPAR(data.reduce((acc, item) => { acc[item.pit_no] = item.par; return acc; }, {}));
-
-
-        fetch(`${API_BASE_URL}length/${values.place_id}/${values.tee}`)
-          .then(response => response.json())
-          .then(data => {
-            // update HCP and PAR values
-
-
-
-
-          })
-
-
-
-
-
-      }).catch(error => { setDbg(`Error: ${error.message}`); });
-
-  }, [values]);
-
-  // change global values
+  const [dbg2, setDbg2] = useState('');
   const values_changed = (tagname, value) => {
-    setValues(prevValues => ({
+    // dummy
+  };
+
+  const input_changed = (tagname, value) => {
+    // console.log(`place_id: ${place_id}`);
+    setXValues(prevValues => ({
       ...prevValues,
       [tagname]: value
     }));
-  };
 
+if tagname
+    // get pits info for selected place
 
-  const result_changed = (pit_index, value) => {
-    setValues(prevValues => ({
-      ...prevValues,
-      pits: {
-        ...prevValues.pits, // копируем все существующие pits
-        [pit_index]: value  // изменяем только нужный элемент
-      }
-    }));
+    /*    fetch(`${API_BASE_URL}pits/${place_id}`)
+          .then(response => response.json())
+          .then(data => {
+            setXData(data);
+          }).catch(error => { setDbg(`Error: ${error.message}`); });
+    */
   };
 
 
@@ -117,15 +75,16 @@ export default function App() {
           if (r === 0)
             t = pit_index
           else if (r === 2)
-            t = par[pit_index]
+            t = 'par' //par[pit_index]
           else if (r === 3)
             t =
               <NumInput
                 className="square" allowFloat={false}
-                changed_callback={result_changed} tagname={tbl_index * 10 + c - 1}
+                // changed_callback={result_changed}
+                tagname={tbl_index * 10 + c - 1}
               />
           else if (r === 4)
-            t = hcp[pit_index]
+            t = 'hcp'//hcp[pit_index]
         }
 
         colsArray.push(<td key={c}>{t}</td>)
@@ -153,23 +112,25 @@ export default function App() {
       <div className='flex_left_center'>
         <PlaceSelect
           className="mr"
-          changed_callback={values_changed} tagname="place_id"
+          changed_callback={input_changed} tagname="place"
         />
         <ModeSelect
-          changed_callback={values_changed} tagname="mode_id"
+          changed_callback={input_changed} tagname="mode"
         />
       </div>
       <div className='flex_left_center'>
         <ColorSelect
-          changed_callback={values_changed} tagname="color_id"
+          changed_callback={input_changed} tagname="tee"
           style={{ width: "150px" }}
         />
 
         <GenderSelect
-          changed_callback={values_changed} tagname="gender_id"
+          changed_callback={input_changed} tagname="gender"
           style={{ width: "150px" }}
         />
-      </div>
+      </div>   <div className='flex_left_center'>
+        <div className='dbg'> {dbg}</div>
+        <div className='dbg'> {dbg2}</div></div>
       {renderTable(0)}
       {renderTable(1)}
       <div className='flex_left_center'>
@@ -186,7 +147,7 @@ export default function App() {
         </div >
         <BtnSave />
       </div >
-      <pre className='dbg'> {dbg}</pre>
+
     </>
   )
 

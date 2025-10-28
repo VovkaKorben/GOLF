@@ -249,9 +249,9 @@ input[type="text"]:focus {
   border-radius: 10px;
   font-size: 10px;
   background-color: rgb(248, 230, 230);
-  position: fixed;
-  right: 20px;
-  top: 20px;
+  /* position: fixed; */
+  /* right: 20px; */
+  /* top: 20px; */
   min-width: 200px;
 
 }
