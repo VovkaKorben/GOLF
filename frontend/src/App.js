@@ -21,8 +21,11 @@ export default function App() {
 
 
   const [values, setValues] = useState({ 'pits': [] });
-  const [hcp, setHCP] = useState(init_arr);
-  const [par, setPAR] = useState(init_arr);
+  const [data, setData] = useState({});
+
+  // const [hcp, setHCP] = useState(init_arr);
+  // const [par, setPAR] = useState(init_arr);
+  // const [tee, setTEE] = useState('');
 
 
 
@@ -42,33 +45,31 @@ export default function App() {
     if (!('place_id' in values))
       return;
 
+    // get pits info for selected place
     fetch(`${API_BASE_URL}pits/${values.place_id}`)
       .then(response => response.json())
       .then(data => {
-
         // update HCP and PAR values
-        setHCP(data.reduce((acc, item) => {
-          acc[item.pit_no] = item.hcp;
-          return acc;
-        }, {}));
+        setHCP(data.reduce((acc, item) => { acc[item.pit_no] = item.hcp; return acc; }, {}));
+        setPAR(data.reduce((acc, item) => { acc[item.pit_no] = item.par; return acc; }, {}));
 
 
-        setPAR(data.reduce((acc, item) => {
-          acc[item.pit_no] = item.par;
-          return acc;
-        }, {}));
+        fetch(`${API_BASE_URL}length/${values.place_id}/${values.tee}`)
+          .then(response => response.json())
+          .then(data => {
+            // update HCP and PAR values
 
 
 
-        //setPlaces(data);
-        // setDbg(`PAR: ${JSON.stringify(par, undefined, 2)}, HCP: ${JSON.stringify(hcp, undefined, 2)}`);
-        //JSON.stringify(p, undefined, 2));
+
+          })
+
+
+
+
+
       }).catch(error => { setDbg(`Error: ${error.message}`); });
 
-    // check all required values exists
-    /*let missing_fields = required_values.filter(item => !(item.tagname in values)).map(item => item.caption).join(', ');
-    if (missing_fields.length) missing_fields = <>This field(s) required: <b>{missing_fields}</b></>
-    setvaluesWarn(missing_fields);*/
   }, [values]);
 
   // change global values
@@ -90,10 +91,10 @@ export default function App() {
     }));
   };
 
-  const col_first = ['REIKÄ', 'PITUUS', 'PAR', 'LYÖNNIT', 'HCP', 'NET.']
-  const col_last = [['ULOS', ''], ['SISÄÄN', 'YHT.']]
 
   const renderTable = (tbl_index) => {
+    const col_first = ['REIKÄ', 'PITUUS', 'PAR', 'LYÖNNIT', 'HCP', 'NET.']
+    const col_last = [['ULOS', ''], ['SISÄÄN', 'YHT.']]
 
     const rowsArray = [];
 
