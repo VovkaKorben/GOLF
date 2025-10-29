@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 
 
-const BtnSave = ({ onClicked, caption }) => {
+const Btn = ({ onClicked, caption = "Default" }) => {
 
 
 
@@ -12,15 +12,14 @@ const BtnSave = ({ onClicked, caption }) => {
 
     };
 
-
     return (
         <button value="Save"
             onClick={onClick}
         >
-            Save
+            {caption}
         </button>
 
     );
 };
 
-export default BtnSave;
+export default Btn;

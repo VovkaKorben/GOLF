@@ -29,28 +29,14 @@ const get_sum = (obj, from, to) => {
 }
 
 const null18 = () => { let r = {}; for (let i = 1; i <= 18; i++)    r[i] = null; return r; }
-export default function App() {
-  const [GameList, setGameList] = useState([]);
 
-  useEffect(() => {
-    // console.log(`useEffect XData ${JSON.stringify(XData)}`);
-    // setDbg(`XData: ${XData.jpp()}`);
-  }, [GameList]);
-  useEffect(() => {
-    // get game list
-    setGameList([1,2]);
-  }, []);
-  return (
-    <>{GameList}</>
-  )
-}
-function App2() {
+export default function App() {
   const [XData, setXData] = useState({
     'hcp': null18(),
     'par': null18(),
     'distance': null18()
   });
-
+  
   const [GameID, setGameID] = useState(null);
   const [PlaceID, setPlaceID] = useState(null);
   const [GenderID, setGenderID] = useState(null);
