@@ -45,7 +45,7 @@ const server = app.listen(API_PORT, () => {
 app.get("/api/health", async (req, res) => {
   res.status(200).json({ status: "ok" });
 });
-
+// show list of all places
 app.get("/api/places", async (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) {
@@ -65,7 +65,7 @@ app.get("/api/places", async (req, res) => {
     });
   });
 });
-
+// get place info by ID
 app.get("/api/place/:place_id", async (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) {
@@ -75,7 +75,7 @@ app.get("/api/place/:place_id", async (req, res) => {
 
     connection.query('SELECT * FROM places WHERE place_id=?', [req.params.place_id],
       (err, result) => {
-        connection.release(); 
+        connection.release();
 
         if (err) {
           console.log(`Error executing the query - ${err}`);
@@ -86,6 +86,8 @@ app.get("/api/place/:place_id", async (req, res) => {
       });
   });
 });
+
+// get HCP/PAR values from place by place_id
 app.get("/api/pits/:place_id", async (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) {
@@ -94,7 +96,27 @@ app.get("/api/pits/:place_id", async (req, res) => {
     }
     connection.query('SELECT pit_no,par,hcp FROM pits WHERE place_id=?', [req.params.place_id],
       (err, result) => {
-        connection.release(); 
+        connection.release();
+
+        if (err) {
+          console.log(`Error executing the query - ${err}`);
+          return res.status(500).json({ error: err.message });
+        }
+
+        res.status(200).json(result);
+      });
+  });
+});
+// get distances for field by place_id + tee_id
+app.get("/api/tee/:place_id/:tee_id", async (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log('⛔ Database connection error:', err.message);
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+    connection.query('SELECT pit_no,distance FROM tees WHERE place_id=? AND tee_id=?', [req.params.place_id, req.params.tee_id],
+      (err, result) => {
+        connection.release();
 
         if (err) {
           console.log(`Error executing the query - ${err}`);

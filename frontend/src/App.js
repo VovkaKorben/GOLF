@@ -8,48 +8,111 @@ import ModeSelect from './comps/ModeSelect.js';
 import TextInput from './comps/TextInput.js';
 import GenderSelect from './comps/GenderSelect.js';
 import BtnSave from './comps/BtnSave.js';
+/*
+Object.prototype.jp = function () {
+  return JSON.stringify(this, undefined, 2);
+};
+
+Object.prototype.j = function () {
+  return JSON.stringify(this);
+};*/
+
+
+const get_sum = (obj, from, to) => {
+  let s = 0
+  for (let i = from; i <= to; i++) {
+    if (!(i in obj) || obj[i] === null)
+      return '';
+    s += obj[i]
+  }
+  return s
+}
+
+const null18 = () => { let r = {}; for (let i = 1; i <= 18; i++)    r[i] = null; return r; }
 
 export default function App() {
+  const [XData, setXData] = useState({
+    'hcp': null18(),
+    'par': null18(),
+    'distance': null18()
+  });
+  const [PlaceID, setPlaceID] = useState(null);
+  const [GenderID, setGenderID] = useState(null);
+  const [TeeID, setTeeID] = useState(null);
 
+  const [Mode, setMode] = useState(undefined);
+  const [EHCP, setEHCP] = useState(undefined);
 
-
-
-  const [xvalues, setXValues] = useState({});
-  const [xdata, setXData] = useState({});
 
   useEffect(() => {
-    setDbg(`xvalues: ${JSON.stringify(xvalues, undefined, 2)}`);
-  }, [xvalues]);
+    const doFetch = async () => {
+      try {
+        console.log('PlaceID');
+        const hcp = null18();
+        const par = null18();
+
+        if (PlaceID) {
+          const resp = await fetch(`${API_BASE_URL}pits/${PlaceID}`);
+          const data = await resp.json();
+          for (const item of data) {
+            hcp[item.pit_no] = item.hcp;
+            par[item.pit_no] = item.par;
+          }
+        }
+
+        setXData(prevValues => ({ ...prevValues, 'hcp': hcp, 'par': par }));
+      } catch (error) {
+        console.error('Ошибка:', error);
+      }
+    };
+    doFetch();
+  }, [PlaceID]);
+
   useEffect(() => {
-    setDbg2(`xdata: ${JSON.stringify(xdata, undefined, 2)}`);
-  }, [xdata]);
+    const doFetch = async () => {
+      try {
+        console.log('PlaceID + TeeID');
+        const distance = null18();
 
-  // const [valuesWarn, setvaluesWarn] = useState('');
-  const [dbg, setDbg] = useState('');
-  const [dbg2, setDbg2] = useState('');
-  const values_changed = (tagname, value) => {
-    // dummy
-  };
+        // try fetch distances
+        if (PlaceID && TeeID) {
+          const resp = await fetch(`${API_BASE_URL}tee/${PlaceID}/${TeeID}`);
+          const data = await resp.json();
+          for (const item of data)
+            distance[item.pit_no] = item.distance;
+        }
 
-  const input_changed = (tagname, value) => {
-    // console.log(`place_id: ${place_id}`);
-    setXValues(prevValues => ({
-      ...prevValues,
-      [tagname]: value
-    }));
+        setXData(prevValues => ({ ...prevValues, 'distance': distance }));
+      } catch (error) {
+        console.error('Ошибка:', error);
+      }
+    };
 
-if tagname
-    // get pits info for selected place
+    doFetch();
+  }, [PlaceID, TeeID]);
 
-    /*    fetch(`${API_BASE_URL}pits/${place_id}`)
-          .then(response => response.json())
-          .then(data => {
-            setXData(data);
-          }).catch(error => { setDbg(`Error: ${error.message}`); });
-    */
-  };
+  useEffect(() => {
+    const evalHCP = async () => {
+
+    };
+
+    evalHCP();
 
 
+  }, [EHCP]);
+
+
+  useEffect(() => {
+    console.log(`useEffect XData ${JSON.stringify(XData)}`);
+    // setDbg(`XData: ${XData.jpp()}`);
+  }, [XData]);
+
+  const place_changed = (tagname, value) => { setPlaceID(value); };
+  const tee_changed = (tagname, value) => { setTeeID(value); };
+  const gender_changed = (tagname, value) => { setGenderID(value); };
+  const ehcp_changed = (tagname, value) => { setEHCP(value); };
+  const mode_changed = (tagname, value) => { };
+  const values_changed = (tagname, value) => { };
   const renderTable = (tbl_index) => {
     const col_first = ['REIKÄ', 'PITUUS', 'PAR', 'LYÖNNIT', 'HCP', 'NET.']
     const col_last = [['ULOS', ''], ['SISÄÄN', 'YHT.']]
@@ -74,8 +137,10 @@ if tagname
           let pit_index = tbl_index * 9 + c
           if (r === 0)
             t = pit_index
-          else if (r === 2)
-            t = 'par' //par[pit_index]
+          if (r === 1)
+            t = XData['distance'][pit_index]
+          else if (r === 2 && PlaceID)
+            t = XData['par'][pit_index]
           else if (r === 3)
             t =
               <NumInput
@@ -83,13 +148,34 @@ if tagname
                 // changed_callback={result_changed}
                 tagname={tbl_index * 10 + c - 1}
               />
-          else if (r === 4)
-            t = 'hcp'//hcp[pit_index]
+          else if (r === 4 && PlaceID)
+            t = XData['hcp'][pit_index]
         }
+
+        // par sum calculations
+        else if (c === 10 && r === 2)
+          t = get_sum(XData['par'], tbl_index * 9 + 1, tbl_index * 9 + 9)
+        else if (tbl_index === 1 && c === 11 && r === 2)
+          t = get_sum(XData['par'], 1, 18)
+
+        // distance calculations
+        else if (c === 10 && r === 1)
+          t = get_sum(XData['distance'], tbl_index * 9 + 1, tbl_index * 9 + 9)
+        else if (tbl_index === 1 && c === 11 && r === 1)
+          t = get_sum(XData['distance'], 1, 18)
 
         colsArray.push(<td key={c}>{t}</td>)
       }
-      rowsArray.push(<tr className={r === 0 ? 'reika' : r === 2 ? 'par' : 'other'} key={r}>{colsArray}</tr>)
+      let trclass = 'other';
+      if (r === 0)
+        trclass = 'reika'
+      if (r === 1 && TeeID)
+        trclass = `tee${TeeID}`
+      if (r === 2)
+        trclass = 'par'
+
+
+      rowsArray.push(<tr className={trclass} key={r}>{colsArray}</tr>)
     }
     return <table className='r'><tbody>{rowsArray}</tbody></table>;
   };
@@ -101,10 +187,10 @@ if tagname
         <span className='large_text'>Exact HCP:</span>
         <NumInput
           className="margin_sides" style={{ width: "50px" }} allowFloat={true}
-          changed_callback={values_changed} tagname="ehcp"
+          changed_callback={ehcp_changed} tagname="ehcp"
           recalc="1"
         />
-
+        {EHCP}
         <div className='large_text green_text'>Enter results and save card</div>
       </div>
       <hr />
@@ -112,25 +198,25 @@ if tagname
       <div className='flex_left_center'>
         <PlaceSelect
           className="mr"
-          changed_callback={input_changed} tagname="place"
+          changed_callback={place_changed} tagname="place"
         />
         <ModeSelect
-          changed_callback={input_changed} tagname="mode"
+          changed_callback={mode_changed} tagname="mode"
         />
       </div>
       <div className='flex_left_center'>
         <ColorSelect
-          changed_callback={input_changed} tagname="tee"
+          changed_callback={tee_changed} tagname="tee"
           style={{ width: "150px" }}
         />
 
         <GenderSelect
-          changed_callback={input_changed} tagname="gender"
+          changed_callback={gender_changed} tagname="gender"
           style={{ width: "150px" }}
         />
-      </div>   <div className='flex_left_center'>
-        <div className='dbg'> {dbg}</div>
-        <div className='dbg'> {dbg2}</div></div>
+      </div>
+      {/* <div className='flex_left_center'>        <div className='dbg'> {dbg}</div>        <div className='dbg'> {dbg2}</div></div> */}
+
       {renderTable(0)}
       {renderTable(1)}
       <div className='flex_left_center'>

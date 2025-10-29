@@ -2,13 +2,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 body,
-input[type="text"], select, option {
+input[type="text"],
+select,
+option {
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
   font-variation-settings:
-    "wdth"100;
+    "wdth" 100;
 }
 
 body {
@@ -165,14 +167,16 @@ option::checkmark {
 }
 
 /* common */
-input[type="text"], select {
+input[type="text"],
+select {
   border-radius: 8px;
 
   border: 1.5px solid #e2e8f0;
 
 }
 
-input[type="text"], select {
+input[type="text"],
+select {
 
   padding: 10px;
 
@@ -254,4 +258,20 @@ input[type="text"]:focus {
   /* top: 20px; */
   min-width: 200px;
 
+}
+
+tr.tee0 {
+  background-color: rgb(230, 230, 230);
+}
+
+tr.tee1 {
+  background-color: rgb(240, 243, 78);
+}
+
+tr.tee2 {
+  background-color: rgb(141, 128, 255);
+}
+
+tr.tee3 {
+  background-color: rgb(255, 43, 43);
 }
