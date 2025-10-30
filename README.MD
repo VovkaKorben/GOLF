@@ -1,3 +1,22 @@
+site route mechanism
+------------------------------------
+main page lead to list of games
+each game from list you can edit or delete
+on the main page we also have 'create new' button
+
+
+/ 
+список игр
+
+/game/15
+
+/game
+
+
+
+
+
+
 backend api queries
 
 GET /api/health

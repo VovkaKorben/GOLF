@@ -1,4 +1,5 @@
 import './App.css';
+import './game.css';
 import React, { useEffect, useState } from "react";
 import API_BASE_URL from './consts.js';
 import PlaceSelect from "./comps/PlaceSelect.js";
@@ -7,16 +8,9 @@ import ColorSelect from './comps/TeeSelect.js';
 import ModeSelect from './comps/ModeSelect.js';
 import TextInput from './comps/TextInput.js';
 import GenderSelect from './comps/GenderSelect.js';
+import GameItem from './comps/GameItem.js';
 import Btn from './comps/Btn.js';
-/*
-Object.prototype.jp = function () {
-  return JSON.stringify(this, undefined, 2);
-};
-
-Object.prototype.j = function () {
-  return JSON.stringify(this);
-};*/
-
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 const get_sum = (obj, from, to) => {
   let s = 0
@@ -30,18 +24,74 @@ const get_sum = (obj, from, to) => {
 
 const null18 = () => { let r = {}; for (let i = 1; i <= 18; i++)    r[i] = null; return r; }
 export default function App() {
+
   const [GameList, setGameList] = useState([]);
+  const [StartPage, setStartPage] = useState(0);
+
 
   useEffect(() => {
     // console.log(`useEffect XData ${JSON.stringify(XData)}`);
     // setDbg(`XData: ${XData.jpp()}`);
+
+
+    console.log(JSON.stringify(GameList));
   }, [GameList]);
+
   useEffect(() => {
-    // get game list
-    setGameList([1,2]);
-  }, []);
+
+    const get_games_list = async () => {
+      try {
+
+        const resp = await fetch(`${API_BASE_URL}games?start=${StartPage}`);
+        const data = await resp.json();
+        setGameList(data);
+      } catch (error) {
+        console.error('Ошибка:', error);
+      }
+    };
+    get_games_list();
+
+
+
+  }, [StartPage]);
+
+
   return (
-    <>{GameList}</>
+
+
+
+    <div id="mainroot">
+
+      <Routes>
+        <Route path="/" element={1} />
+        <Route path="/game/:id" element={2} />
+      </Routes>
+
+
+      {/* <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/game/:id" element={<UserDetail />} />
+      </Routes> */}
+
+
+
+
+      <div className='flex_right_center'
+        style={{ width: "100%" }}
+      >
+        <Btn
+          caption='Add'
+          icon='/icons/add.svg'
+        />
+      </div>
+      <div id='gamelist'>
+        {GameList.map((game) => (
+          <GameItem game_data={game} />
+        ))}
+      </div>
+
+
+    </div>
   )
 }
 function App2() {

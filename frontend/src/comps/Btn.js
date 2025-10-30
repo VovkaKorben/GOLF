@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 
 
-const Btn = ({ onClicked, caption = "Default" }) => {
+const Btn = ({ onClicked, caption = "Default",icon }) => {
 
 
 
@@ -15,7 +15,10 @@ const Btn = ({ onClicked, caption = "Default" }) => {
     return (
         <button value="Save"
             onClick={onClick}
+            className="flex_center_center"
         >
+            {icon && <img className="mr_small" src={icon} />}
+            {/* {if (icon) <img src='/icons/course.svg' />} */}
             {caption}
         </button>
 

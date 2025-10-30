@@ -1,0 +1,187 @@
+#mainroot {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    width: 70%;
+
+    margin: auto;
+}
+
+.game_item {
+    background-color: #276b27;
+    border-radius: 14px;
+    color: white;
+    border: 3px solid #276b27;
+    box-sizing: border-box;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+
+.game_item>div {
+    /* border: 1px solid red; */
+
+}
+
+.game_item_header {
+    display: grid;
+    grid-template-columns: 10% 50% 30% 5% 5%;
+    grid-template-rows: repeat(2, 1fr);
+    /* gap: 11px; */
+
+    height: 90px;
+
+
+    width: 100%;
+    min-width: 700px;
+
+
+    font-size: 24px;
+    border: 0px;
+    padding: 10px;
+    box-sizing: border-box;
+
+}
+
+
+div.gi_icon {
+    grid-column-start: 1;
+    grid-row: span 2 / span 2;
+}
+
+
+div.gi_dt,
+div.gi_comment {
+    font-size: 14px;
+}
+
+div.gi_dt {
+    grid-column-start: 2;
+    grid-row-start: 2;
+}
+
+div.gi_judge {
+    grid-column-start: 3;
+    grid-row-start: 1;
+
+}
+
+div.gi_comment {
+    grid-column-start: 3;
+    grid-row-start: 2;
+    font-style: italic;
+}
+
+div.gi5 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 4;
+    grid-row-start: 1;
+    width: 40px;
+}
+
+div.gi6 {
+    grid-row: span 2 / span 2;
+    grid-column-start: 5;
+    grid-row-start: 1;
+    width: 40px;
+}
+
+
+
+.game_item:hover,
+button:hover {
+    background-color: #318231;
+    cursor: pointer;
+    transition: all 300ms ease;
+}
+
+button {
+    outline: none;
+    border: none;
+    font-size: 20px;
+    width: 120px;
+    height: 70px;
+    background-color: #276b27;
+    border-radius: 14px;
+    color: white;
+}
+
+
+#gamelist {
+    width: 100%;
+}
+
+div.gi_info {
+    height: 150px;
+    background-color: rgb(241, 255, 244);
+    /* border-radius: 14px; */
+    /* transition: height 200ms ease; */
+    color: black;
+}
+
+
+
+
+.btn_icon {
+    opacity: 0.3;
+    transition: all 200ms ease;
+}
+
+.btn_icon:hover {
+    opacity: 1;
+}
+
+.game_result {
+    width: 100%;
+    height: 100%;
+
+}
+
+
+
+/* Убираем внешнюю рамку таблицы */
+.game_result {
+    border: none;
+}
+
+
+
+
+.game_result td {
+    border: 1px solid #318231;
+    width: 5%;
+}
+
+/* remove external borders */
+.game_result tr:first-child td {
+    border-top: none;
+}
+
+.game_result tr:last-child td {
+    border-bottom: none;
+}
+
+.game_result td:first-child {
+    border-left: none;
+}
+
+.game_result td:last-child {
+    border-right: none;
+}
+
+tr.gi_row0 {
+    color: white;
+font-weight: 600;
+    background-color: #318231;
+}
+
+tr.gi_row1 {
+    color: lime;font-weight: 600;
+}
+
+tr.gi_row2 {
+    color: blue;
+}

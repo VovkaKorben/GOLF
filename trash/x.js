@@ -155,3 +155,12 @@ useEffect(() => {
   
     }, [PlaceID, TeeID, GenderID]);
   */
+
+
+    /*
+        setExpandedIds(prev =>
+          prev.includes(id)
+            ? prev.filter(itemId => itemId !== id) // удаляем если уже есть
+            : [...prev, id] // добавляем если нет
+        );
+    */

@@ -127,6 +127,58 @@ app.get("/api/tee/:place_id/:tee_id", async (req, res) => {
       });
   });
 });
+
+// get games list, pagination allowed (start / count)
+app.get("/api/games", async (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log('⛔ Database connection error:', err.message);
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+    const start = parseInt(req.query.start) || 0; // число
+    const count = parseInt(req.query.count) || 10; // число
+
+
+
+    connection.query('SELECT g.*,p.name as place_name FROM games as g left join places as p on g.place_id = p.place_id order by dt desc LIMIT ? OFFSET ?', [count, start],
+      (err, result) => {
+        connection.release();
+
+        if (err) {
+          console.log(`Error executing the query - ${err}`);
+          return res.status(500).json({ error: err.message });
+        }
+
+        res.status(200).json(result);
+      });
+  });
+});
+
+// get games list, pagination allowed (start / count)
+app.get("/api/game/:game_id", async (req, res) => {
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log('⛔ Database connection error:', err.message);
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+    const start = parseInt(req.query.start) || 0; // число
+    const count = parseInt(req.query.count) || 10; // число
+
+
+
+    connection.query('SELECT g.*,p.name as place_name FROM games as g left join places as p on g.place_id = p.place_id order by dt desc LIMIT ? OFFSET ?', [count, start],
+      (err, result) => {
+        connection.release();
+
+        if (err) {
+          console.log(`Error executing the query - ${err}`);
+          return res.status(500).json({ error: err.message });
+        }
+
+        res.status(200).json(result);
+      });
+  });
+});
 app.use(notFound);
 app.use(errorHandler);
 // export default app;

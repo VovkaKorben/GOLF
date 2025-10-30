@@ -10,7 +10,7 @@ option {
   font-weight: 400;
   font-style: normal;
   font-variation-settings:
-    "wdth"100;
+    "wdth" 100;
 }
 
 body {
@@ -18,6 +18,11 @@ body {
   font-size: 9pt;
   padding: 20px;
   margin: 0px;
+
+}
+
+body,
+#root {
   box-sizing: border-box;
 }
 
@@ -74,7 +79,7 @@ table {
 
 td:first-child {
   /* border: 1px dotted #6f92ca; */
-  text-align: left;
+  /* text-align: left; */
 }
 
 td {
@@ -113,10 +118,7 @@ tr.other {
 }
 
 
-button {
-  width: 100px;
-  height: 70px;
-}
+
 
 select,
 ::picker(select) {
@@ -195,13 +197,11 @@ select {
 }
 
 select:hover,
-button:hover,
 input[type="text"]:hover {
   border-color: #cbd5e0;
 }
 
 select:focus,
-button:focus,
 input[type="text"]:focus {
   outline: none;
   border-color: #4299e1;
@@ -215,6 +215,15 @@ input[type="text"]:focus {
   justify-content: flex-start;
   align-items: center;
   align-content: stretch;
+}
+
+.flex_right_center {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  align-content: center;
 }
 
 .flex_col_left {
@@ -233,6 +242,24 @@ input[type="text"]:focus {
   justify-content: center;
   align-items: center;
   align-content: stretch;
+}
+
+.fbl {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  align-content: center;
+}
+
+.ftl {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: center;
 }
 
 .large_text {
@@ -254,6 +281,9 @@ input[type="text"]:focus {
 }
 
 
+.mr_small {
+  margin-right: 6px;
+}
 
 .dbg {
 
@@ -284,6 +314,3 @@ tr.tee2 {
 tr.tee3 {
   background-color: rgb(255, 43, 43);
 }
-
-
-
