@@ -1,58 +1,32 @@
 import React, { useEffect, useState } from "react";
 
-
-
-const ModeSelect = ({ changed_callback, tagname, style }) => {
-    const [value, setValue] = useState("");
-
-
-
-
+const ModeSelect = ({ changed_callback, tagname, style, initValue }) => {
+    const [value, setValue] = useState(initValue);
     const selector_data = [
-        {
-            'id': '0',
-            'caption': 'Lyöntipeli (Stroke play)'
-        },
-        {
-            'id': '1',
-            'caption': 'Reikäpeli (Match play)'
-        },
-        {
-            'id': '2',
-            'caption': 'Pistebogey (Bogey play)'
-        },
-        {
-            'id': '3',
-            'caption': 'Scratch (Stroke play)'
-        }
+        { 'id': '0', 'caption': 'Lyöntipeli (Stroke play)' },
+        { 'id': '1', 'caption': 'Reikäpeli (Match play)' },
+        { 'id': '2', 'caption': 'Pistebogey (Bogey play)' },
+        { 'id': '3', 'caption': 'Scratch (Stroke play)' }
     ];
 
-
-    useEffect(() => {
-
-
-        // fetchPlaces();
-    }, []);
-
     const onChange = (event) => {
-        const new_value = event.target.value;
-        setValue(new_value);
+        const newValue = event.target.value;
+        setValue(newValue);
         if (changed_callback)
-            changed_callback(tagname, new_value);
-
+            changed_callback(tagname, newValue);
     };
 
+    useEffect(() => { setValue(initValue); }, [initValue]);
 
     return (
         <div className="select-container">
             <label htmlFor="color-dropdown">Select calculation mode: </label>
             <select
-
                 onChange={onChange}
                 style={style}
-                 value={value}
+                value={value}
             >
-             <option value="" disabled hidden>Select</option>
+                <option value="" >Select</option>
                 {selector_data.map((data) => (
                     <option key={data.id} value={data.id}>
                         {data.caption}

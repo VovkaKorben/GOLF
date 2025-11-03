@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import API_BASE_URL from '../consts.js';
 
-const PlaceSelect = ({ changed_callback, tagname, className }) => {
+const PlaceSelect = ({ changed_callback, tagname, className, initValue }) => {
     const [places, setPlaces] = useState([]);
-    const [selectedPlace, setSelectedPlace] = useState('');
+    const [value, setValue] = useState(initValue);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -28,11 +28,18 @@ const PlaceSelect = ({ changed_callback, tagname, className }) => {
         fetchPlaces();
     }, []);
 
+    //useEffect(() => {         console.log(`PlaceSelect selectedPlace: ${selectedPlace}`); },         [selectedPlace]);
+
+    useEffect(() => {
+        // console.log(`PlaceSelect initValue changed: ${initValue}`);
+        setValue(initValue);
+    }, [initValue]);
+
     const onChange = (event) => {
-        const value = event.target.value;
-        setSelectedPlace(value);
+        const newValue = event.target.value;
+        setValue(newValue);
         if (changed_callback)
-            changed_callback(tagname, value);
+            changed_callback(tagname, newValue);
     };
 
     // if (loading) return <div>Loading places...</div>;
@@ -43,7 +50,7 @@ const PlaceSelect = ({ changed_callback, tagname, className }) => {
     else if (error) content = <option value="" > Failed to load places</option>;
     else content = (
         <>
-            <option value="" disabled hidden>Select</option>
+            <option value="" >Select</option>
             {places.map((place) => (
                 <option key={place.place_id} value={place.place_id}>
                     {place.name}
@@ -62,7 +69,7 @@ const PlaceSelect = ({ changed_callback, tagname, className }) => {
 
             <select
                 id="places"
-                value={selectedPlace}
+                value={value}
                 onChange={onChange}
                 disabled={error || loading}
             >

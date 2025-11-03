@@ -1,9 +1,9 @@
-import React, {  useState } from "react";
+import React, { useEffect, useState } from "react";
 
 
 
-const TeeSelect = ({ changed_callback, tagname, style }) => {
-    const [value, setValue] = useState("");
+const TeeSelect = ({ changed_callback, tagname, style, initValue }) => {
+    const [value, setValue] = useState(initValue);
 
     const selector_data = [
         { 'id': 0, 'caption': 'White', 'color': 'white' },
@@ -27,12 +27,13 @@ const TeeSelect = ({ changed_callback, tagname, style }) => {
     }
 
     const onChange = (event) => {
-        const new_value = event.target.value;
-        setValue(new_value);
+        const newValue = event.target.value;
+        setValue(newValue);
         if (changed_callback)
-            changed_callback(tagname, new_value);
+            changed_callback(tagname, newValue);
     };
 
+    useEffect(() => { setValue(initValue); }, [initValue]);
 
     return (
         <div className="select-container">
@@ -41,9 +42,9 @@ const TeeSelect = ({ changed_callback, tagname, style }) => {
                 className="custom-select"
                 onChange={onChange}
                 style={style}
-                 value={value}
+                value={value}
             >
-                <option value="" disabled hidden>Select</option>
+                <option value="" >Select</option>
                 {selector_data.map((data) => (
                     <option key={data.id} value={data.id}>
                         {get_svg(data.color)}

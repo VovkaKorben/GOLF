@@ -94,73 +94,106 @@ useEffect(() => {
 }, [xdata]);
 
 
-        /*
-          // Первый запрос
-          const pitsResponse = await fetch(`${API_BASE_URL}pits/${PlaceID}`);
-          const pitsData = await pitsResponse.json();
-  
-          // Второй запрос (зависит от первого)
-          const teesResponse = await fetch(`${API_BASE_URL}tees/${TeeID}?place=${PlaceID}`);
-          const teesData = await teesResponse.json();
-  
-          // Третий запрос
-          const weatherResponse = await fetch(`${API_BASE_URL}weather/${PlaceID}`);
-          const weatherData = await weatherResponse.json();
-  
-          // Вычисления
-          const result = calculateHandicap(pitsData, teesData, weatherData);
-          setXData(result);
-  */
+/*
+  // Первый запрос
+  const pitsResponse = await fetch(`${API_BASE_URL}pits/${placeID}`);
+  const pitsData = await pitsResponse.json();
+ 
+  // Второй запрос (зависит от первого)
+  const teesResponse = await fetch(`${API_BASE_URL}tees/${teeID}?place=${placeID}`);
+  const teesData = await teesResponse.json();
+ 
+  // Третий запрос
+  const weatherResponse = await fetch(`${API_BASE_URL}weather/${placeID}`);
+  const weatherData = await weatherResponse.json();
+ 
+  // Вычисления
+  const result = calculateHandicap(pitsData, teesData, weatherData);
+  setXData(result);
+*/
 
 
-          
-  //  PLACE changed
-  /*  useEffect(() => {
-      const fetchPlace = async () => {
-        // init par/hcp with null
-        const hcp = null18(); const par = null18();
-        if (!PlaceID) { setXData(prevValues => ({ ...prevValues, 'hcp': hcp, 'par': par })); return; }
-  
-        try {
-          const response = await fetch(`${API_BASE_URL}pits/${PlaceID}`);
-          const data = await response.json();
-  
-          for (const item of data) {
-            hcp[item.pit_no] = item.hcp;
-            par[item.pit_no] = item.par;
-          }
-          setXData(prevValues => ({ ...prevValues, 'hcp': hcp, 'par': par }));
-        } catch (error) { setXData(prevValues => ({ ...prevValues, 'hcp': hcp, 'par': par })); }
-      };
-  
-      const fetchTee = async () => {
-        const distance = null18();
-  
-        if (!TeeID || !PlaceID) { setXData(prevValues => ({ ...prevValues, 'distance': distance })); return; }
-  
-        try {
-          const response = await fetch(`${API_BASE_URL}tee/${PlaceID}/${TeeID}`);
-  
-          const data = await response.json();
-  
-        
-  
-          setXData(prevValues => ({ ...prevValues, 'distance': distance }));
-        } catch (error) { setXData(prevValues => ({ ...prevValues, 'distance': distance })); }
-  
-      };
-  
-      fetchPlace();
-      fetchTee();
-  
-    }, [PlaceID, TeeID, GenderID]);
-  */
+
+//  PLACE changed
+/*  useEffect(() => {
+    const fetchPlace = async () => {
+      // init par/hcp with null
+      const hcp = null18(); const par = null18();
+      if (!placeID) { setXData(prevValues => ({ ...prevValues, 'hcp': hcp, 'par': par })); return; }
+ 
+      try {
+        const response = await fetch(`${API_BASE_URL}pits/${placeID}`);
+        const data = await response.json();
+ 
+        for (const item of data) {
+          hcp[item.pit_no] = item.hcp;
+          par[item.pit_no] = item.par;
+        }
+        setXData(prevValues => ({ ...prevValues, 'hcp': hcp, 'par': par }));
+      } catch (error) { setXData(prevValues => ({ ...prevValues, 'hcp': hcp, 'par': par })); }
+    };
+ 
+    const fetchTee = async () => {
+      const distance = null18();
+ 
+      if (!teeID || !placeID) { setXData(prevValues => ({ ...prevValues, 'distance': distance })); return; }
+ 
+      try {
+        const response = await fetch(`${API_BASE_URL}tee/${placeID}/${teeID}`);
+ 
+        const data = await response.json();
+ 
+      
+ 
+        setXData(prevValues => ({ ...prevValues, 'distance': distance }));
+      } catch (error) { setXData(prevValues => ({ ...prevValues, 'distance': distance })); }
+ 
+    };
+ 
+    fetchPlace();
+    fetchTee();
+ 
+  }, [placeID, teeID, genderID]);
+*/
 
 
-    /*
-        setExpandedIds(prev =>
-          prev.includes(id)
-            ? prev.filter(itemId => itemId !== id) // удаляем если уже есть
-            : [...prev, id] // добавляем если нет
-        );
-    */
+/*
+    setExpandedIds(prev =>
+      prev.includes(id)
+        ? prev.filter(itemId => itemId !== id) // удаляем если уже есть
+        : [...prev, id] // добавляем если нет
+    );
+*/
+
+
+
+{/* <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/game/:id" element={<UserDetail />} />
+              </Routes> */}
+
+
+
+
+const get_sum = (obj, from, to) => {
+  let s = 0
+  for (let i = from; i <= to; i++) {
+    if (!(i in obj) || obj[i] === null)
+      return '';
+    s += obj[i]
+  }
+  return s
+}
+
+const null18 = () => { let r = {}; for (let i = 1; i <= 18; i++)    r[i] = null; return r; }
+
+
+
+import React, { useEffect, useState } from "react";
+import API_BASE_URL from './consts.js';
+import PlaceSelect from "./comps/PlaceSelect.js";
+import NumInput from './comps/NumInput.js';
+import TeeSelect from './comps/TeeSelect.js';
+import ModeSelect from './comps/ModeSelect.js';
+import TextInput from './comps/TextInput.js';
+import GenderSelect from './comps/GenderSelect.js';

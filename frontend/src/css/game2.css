@@ -10,15 +10,6 @@
     margin: auto;
 }
 
-.game_item {
-    background-color: #276b27;
-    border-radius: 14px;
-    color: white;
-    border: 3px solid #276b27;
-    box-sizing: border-box;
-    margin-top: 5px;
-    overflow: hidden;
-}
 
 
 .game_item>div {
@@ -26,25 +17,6 @@
 
 }
 
-.game_item_header {
-    display: grid;
-    grid-template-columns: 10% 50% 30% 5% 5%;
-    grid-template-rows: repeat(2, 1fr);
-    /* gap: 11px; */
-
-    height: 90px;
-
-
-    width: 100%;
-    min-width: 700px;
-
-
-    font-size: 24px;
-    border: 0px;
-    padding: 10px;
-    box-sizing: border-box;
-
-}
 
 
 div.gi_icon {

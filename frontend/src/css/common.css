@@ -1,0 +1,40 @@
+body,
+input[type="text"],
+select,
+option, label {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth"100;
+}
+
+body {
+  background-color: #f4f4f4;
+  font-size: 9pt;
+  padding: 20px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+body *, html * {
+  box-sizing: border-box;
+}
+
+table {
+  border-collapse: collapse;
+
+}
+
+.mr_small {
+  margin-right: 6px;
+}
+
+.large_text {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.green_text {
+  color: green;
+}

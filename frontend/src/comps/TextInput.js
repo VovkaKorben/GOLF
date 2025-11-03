@@ -2,34 +2,38 @@ import React, { useEffect, useState } from "react";
 
 
 
-const TextInput = ({ caption, style, changed_callback,tagname }) => {
-    const [value, setValue] = useState("");
+const TextInput = ({
+    caption,
 
-
-
+    changed_callback,
+    tagname,
+    placeholder,
+    initValue = ""
+}) => {
+    const [inputValue, setEditValue] = useState(initValue);
 
     useEffect(() => {
+        setEditValue(initValue);
+    }, [initValue]); // Зависимость от init_value
 
-
-        // fetchPlaces();
-    }, []);
 
     const onChange = (event) => {
-        const value = event.target.value;
-        setValue(value);
+        const newValue = event.target.value;
+        setEditValue(newValue);
         if (changed_callback)
-            changed_callback(tagname, value);
+            changed_callback(tagname, newValue);
 
     };
 
-
+    // console.log(`[${caption}]init_value: ${initValue}`);    console.log(`[${caption}]init_value: ${inputValue}`);
     return (
         <div className="select-container">
             <label htmlFor="color-dropdown">{caption}: </label>
             <input type="text"
-                value={value}
+                value={inputValue}
                 onChange={onChange}
-placeholder="enter text here"
+                placeholder={placeholder}
+
             />
 
         </div>

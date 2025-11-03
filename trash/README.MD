@@ -1,3 +1,9 @@
+при записи игры в редакторе
+1 пишем upsert'ом данные игры (tee/place etc)
+2 запоминаем признак операции (update/insert)
+3 пишем результаты ударов для game_id
+4 если в п.2 был insert то меняем путь на game/:game_id
+
 site route mechanism
 ------------------------------------
 main page lead to list of games

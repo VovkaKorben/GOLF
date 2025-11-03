@@ -1,0 +1,33 @@
+{
+    "root": true,
+    "env": {
+        "node": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "airbnb-base"
+    ],
+    "rules": {
+        "no-unused-vars": "error",
+        "quotes": [ "error", "single" ],
+        "semi": [ "error", "always" ],
+        "eqeqeq": "error",
+        "indent": [ "error", 2 ],
+        "no-multi-spaces": "error",
+        "arrow-parens": [ "error", "always" ],
+        "prefer-const": "error",
+        "no-console": "off",
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+                "js": "always",
+                "json": "always"
+            }
+        ]
+
+
+
+    }
+}

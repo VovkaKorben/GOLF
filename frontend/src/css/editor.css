@@ -1,0 +1,63 @@
+.editor-cont {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "h1 h1 h1 h1"
+        "e1 e1 e2 e2"
+        "e3 e3 e4 e4"
+        "t1 t1 t1 t1"
+        "t2 t2 t2 t2"
+        "ae1 ae1 b1 b2"
+        "ae2 ae2 b1 b2";
+}
+
+.editor-cont > div {
+    /* border: 1px dashed rgba(0, 0, 0, 0.222); */
+}
+
+.h1 {
+    grid-area: h1;
+}
+
+.e1 {
+    grid-area: e1;
+}
+
+.e2 {
+    grid-area: e2;
+}
+
+.e3 {
+    grid-area: e3;
+}
+
+.e4 {
+    grid-area: e4;
+}
+
+.t1 {
+    grid-area: t1;
+}
+
+.t2 {
+    grid-area: t2;
+}
+
+.ae1 {
+    grid-area: ae1;
+}
+
+.ae2 {
+    grid-area: ae2;
+}
+
+.b1 {
+    grid-area: b1;
+}
+
+.b2 {
+    grid-area: b2;
+}

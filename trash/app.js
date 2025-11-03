@@ -1,42 +1,11 @@
-import './App.css';
-import React, { useEffect, useState } from "react";
-import API_BASE_URL from './consts.js';
-import PlaceSelect from "./comps/PlaceSelect.js";
-import NumInput from './comps/NumInput.js';
-import TeeSelect from './comps/TeeSelect.js';
-import ModeSelect from './comps/ModeSelect.js';
-import TextInput from './comps/TextInput.js';
-import GenderSelect from './comps/GenderSelect.js';
-import Btn from './comps/Btn.js';
-/*
-Object.prototype.jp = function () {
-  return JSON.stringify(this, undefined, 2);
-};
 
-Object.prototype.j = function () {
-  return JSON.stringify(this);
-};*/
-
-
-const get_sum = (obj, from, to) => {
-  let s = 0
-  for (let i = from; i <= to; i++) {
-    if (!(i in obj) || obj[i] === null)
-      return '';
-    s += obj[i]
-  }
-  return s
-}
-
-const null18 = () => { let r = {}; for (let i = 1; i <= 18; i++)    r[i] = null; return r; }
-
-export default function App() {
+function App2() {
   const [XData, setXData] = useState({
     'hcp': null18(),
     'par': null18(),
     'distance': null18()
   });
-  
+
   const [gameID, setGameID] = useState(null);
   const [placeID, setPlaceID] = useState(null);
   const [genderID, setGenderID] = useState(null);
