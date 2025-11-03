@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 
 const TeeSelect = ({ changed_callback, tagname, style, initValue }) => {
-    const [value, setValue] = useState(initValue);
+    const [value, setValue] = useState('');
 
     const selector_data = [
         { 'id': 0, 'caption': 'White', 'color': 'white' },
@@ -30,10 +30,10 @@ const TeeSelect = ({ changed_callback, tagname, style, initValue }) => {
         const newValue = event.target.value;
         setValue(newValue);
         if (changed_callback)
-            changed_callback(tagname, newValue);
+            changed_callback(tagname, newValue.trim() === '' ? null : parseInt( newValue));
     };
 
-    useEffect(() => { setValue(initValue); }, [initValue]);
+   useEffect(() => { setValue(initValue ? initValue : ''); }, [initValue]);
 
     return (
         <div className="select-container">
@@ -47,9 +47,8 @@ const TeeSelect = ({ changed_callback, tagname, style, initValue }) => {
                 <option value="" >Select</option>
                 {selector_data.map((data) => (
                     <option key={data.id} value={data.id}>
-                        {get_svg(data.color)}
-                        {/* <img src="usa.jpg" alt="111" /> */}
-                        <span> {data.caption}</span>
+                        {/* {get_svg(data.color)}<span>{data.caption}</span> */}
+                        {data.caption}
                     </option>
                 ))}
 

@@ -14,23 +14,48 @@ import '../css/mainpage.css';
 const MainPage = ({ }) => {
 
     const [GameList, setGameList] = useState([]);
-    const [StartPage, setStartPage] = useState(0);
+    // const [StartPage, setStartPage] = useState(0);
 
     const navigate = useNavigate();
     const add_new_game = () => {
         navigate('/game')
     }
+    const onDelete = (game_id) => {
+
+        const delete_game = async () => {
+            try {
+
+                // console.log(` delete_game: ${JSON.stringify(game_id)}`);
+                setGameList(GameList => GameList.filter(item => item.game_id !== game_id));
+                const resp = await fetch(`${API_BASE_URL}game`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ game_id: game_id })
+                });
+                const data = await resp.json();
+
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        };
+        delete_game();
+
+
+
+
+
+
+        // alert(`MainPage GameItem delete: ${id}`)
+    }
 
     useEffect(() => {
-        console.log(JSON.stringify(GameList));
-    }, [GameList]);
-
-    useEffect(() => {
-
         const get_games_list = async () => {
             try {
 
-                const resp = await fetch(`${API_BASE_URL}games?start=${StartPage}`);
+                const resp = await fetch(`${API_BASE_URL}games?start=0`);
                 const data = await resp.json();
                 setGameList(data);
             } catch (error) {
@@ -39,9 +64,8 @@ const MainPage = ({ }) => {
         };
         get_games_list();
 
+    }, []);
 
-
-    }, [StartPage]);
     return (
 
 
@@ -58,7 +82,11 @@ const MainPage = ({ }) => {
             </div>
             <div id='gamelist'>
                 {GameList.map((game) => (
-                    <GameItem game_data={game} />
+                    <GameItem
+                        key={game.game_id}
+                        game_data={game}
+                        onDelete={onDelete}
+                    />
                 ))}
             </div>
 

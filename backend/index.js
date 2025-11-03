@@ -8,7 +8,7 @@ import { errorHandler, notFound } from './middleware/error.js';
 dotenv.config();
 
 const {
-  API_PORT = 3500, MYSQL_PORT = 3306, MYSQL_URI, MYSQL_USR, MYSQL_PWD,
+  API_PORT = 3500, MYSQL_PORT = 3306, MYSQL_URI, MYSQL_USR, MYSQL_PWD, DB_NAME
 } = process.env;
 if (!MYSQL_URI) {
   console.error('⛔ Check MYSQL_URI in .env');
@@ -20,7 +20,7 @@ const pool = mysql.createPool({
   user: MYSQL_USR,
   password: MYSQL_PWD,
   port: MYSQL_PORT,
-  database: 'golf',
+  database: DB_NAME,
   connectionLimit: 10,
   acquireTimeout: 60000,
   timeout: 60000,
@@ -33,7 +33,9 @@ app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 const server = app.listen(API_PORT, () => {
-  console.log(`💖 Golf API started on http://localhost:${API_PORT}`);
+  console.log(`⛳ Golf API started on http://localhost:${API_PORT}`);
+  console.log(`💖 Health check with http://localhost:${API_PORT}/api/health`);
+
 });
 
 
@@ -67,22 +69,22 @@ const executeQuery = (query, params = []) => {
   });
 };
 
-// http wrapper
+// http wrapper for QUERIES
 const handleDatabaseRequest = async (res, query, params = []) => {
-
-  let debugQuery = query;
-  // console.log('📝 1 SQL Query:', debugQuery);
-  params.forEach((param, index) => {
-    debugQuery = debugQuery.replace('?', typeof param === 'string' ? `'${param}'` : param);
-  });
-  // console.log('📝 2 SQL Query:', debugQuery);
-
-
   try {
     const result = await executeQuery(query, params);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+// http wrapper for COMMANDS
+const handleExecRequest = async (res, query, params = []) => {
+  try {
+    const result = await executeQuery(query, params);
+    return { success: true, data: result };
+  } catch (error) {
+    return { success: false, error: error.message };
   }
 };
 
@@ -99,16 +101,12 @@ const handleDatabaseRequest = async (res, query, params = []) => {
 app.get('/api/health', async (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
-
-
 // show list of all places
 app.get('/api/places', async (req, res) => {
   await handleDatabaseRequest(
     res, 'SELECT * FROM places', []
   );
 });
-
-
 // get place info by ID
 app.get('/api/place/:place_id', async (req, res) => {
   await handleDatabaseRequest(
@@ -152,70 +150,35 @@ app.get('/api/game/:game_id', async (req, res) => {
 // create game
 app.post('/api/game', async (req, res) => {
   const { place_id, mode_id, tee_id, gender_id, judge_text, comment_text, ehcp } = req.body;
-  console.log(`create game: ${JSON.stringify(req.body)}`);
-  await handleDatabaseRequest(res,
+// console.log(`create game: ${JSON.stringify(req.body)}`);
+  const result = await handleExecRequest(res,
     'INSERT INTO games ( place_id, mode_id, tee_id, gender_id, judge, comment, ehcp) VALUES (?,?,?,?,?,?,?)',
     [place_id, mode_id, tee_id, gender_id, judge_text, comment_text, ehcp]);
-  res.status(200).json({ game_id: result.insertId });
-
+  // console.log(`create game: ${JSON.stringify(result)}`);
+  res.status(200).json(result.data);
 });
+
 // update game
 app.put('/api/game', async (req, res) => {
   const { game_id, place_id, mode_id, tee_id, gender_id, judge_text, comment_text, ehcp } = req.body;
-  console.log(`update game: ${JSON.stringify(req.body)}`);
-  await handleDatabaseRequest(
+  // console.log(`update game: ${JSON.stringify(req.body)}`);
+  await handleExecRequest(
     res,
     'UPDATE games SET place_id = ?,mode_id=?, tee_id = ?,gender_id =?, judge = ?, comment = ?,ehcp=? WHERE game_id = ?',
     [place_id, mode_id, tee_id, gender_id, judge_text, comment_text, ehcp, game_id]
   );
+  res.status(200);
 });
 
-// UPSERT game
-/*
-app.post('/api/game', async (req, res) => {
+// DELETE game by ID
+app.delete('/api/game', async (req, res) => {
+  const { game_id } = req.body;
+  // console.log(`  app.delete game_id: ${JSON.stringify(game_id)}`);
 
-  try {
-
-    const { game_id, place_id, tee_id, judge, comment } = req.body;
-
-    const result = await executeQuery(
-      `INSERT INTO games (game_id, place_id, tee_id, judge, comment) 
-     VALUES (?, ?, ?, ?, ?)
-     ON DUPLICATE KEY UPDATE 
-     place_id = VALUES(place_id), 
-     tee_id = VALUES(tee_id), 
-     judge = VALUES(judge), 
-     comment = VALUES(comment)`,
-      [game_id, place_id, tee_id, judge, comment]);
-
-    // console.log(`res: ${JSON.stringify(xxx)}`);
-    // Возвращаем результат с признаком операции
-    res.status(200).json({
-      success: true,
-      insertId: result.insertId || null
-    });
-
-    // res.status(200).json(result);
-  } catch (error) {
-    // res.status(500).json({ error: error.message });
-    console.error(' --- Error in UPSERT game:', error);
-    res.status(500).json({
-      success: false,
-      error: error
-    });
-  }
-
-
-  const { game_id, place_id, tee_id, judge, comment } = req.body;
-
-  await handleDatabaseRequest(
-    res,
-
-  );
+  await handleExecRequest(res, 'DELETE FROM games WHERE game_id = ?', [game_id]);
+  res.status(200);
 });
-*/
 
 
 app.use(notFound);
 app.use(errorHandler);
-// export default app;

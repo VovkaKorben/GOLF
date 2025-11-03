@@ -8,18 +8,17 @@ const TextInput = ({
     changed_callback,
     tagname,
     placeholder,
-    initValue = ""
+    initValue = null
 }) => {
-    const [inputValue, setEditValue] = useState(initValue);
+    const [value, setValue] = useState("");
 
-    useEffect(() => {
-        setEditValue(initValue);
-    }, [initValue]); // Зависимость от init_value
+    // useEffect(() => { setValue(initValue); }, [initValue]);
 
+    useEffect(() => { setValue(initValue ? initValue : ''); }, [initValue]);
 
     const onChange = (event) => {
         const newValue = event.target.value;
-        setEditValue(newValue);
+        setValue(newValue);
         if (changed_callback)
             changed_callback(tagname, newValue);
 
@@ -30,7 +29,7 @@ const TextInput = ({
         <div className="select-container">
             <label htmlFor="color-dropdown">{caption}: </label>
             <input type="text"
-                value={inputValue}
+                value={value}
                 onChange={onChange}
                 placeholder={placeholder}
 

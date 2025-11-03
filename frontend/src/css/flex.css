@@ -32,3 +32,13 @@
 	align-items: center;
 	align-content: stretch;
 }
+
+.flex_col_left_center 
+{
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	align-content: stretch;
+}

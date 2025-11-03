@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 
 const GenderSelect = ({ changed_callback, tagname, style, initValue }) => {
-    const [value, setValue] = useState(initValue);
+    const [value, setValue] = useState('');
 
 
 
@@ -17,11 +17,11 @@ const GenderSelect = ({ changed_callback, tagname, style, initValue }) => {
         const newValue = event.target.value;
         setValue(newValue);
         if (changed_callback)
-            changed_callback(tagname, newValue);
+          changed_callback(tagname, newValue.trim() === '' ? null : parseInt( newValue));
 
     };
 
-    useEffect(() => { setValue(initValue); }, [initValue]);
+    useEffect(() => { setValue(initValue ? initValue : ''); }, [initValue]);
 
     return (
         <div className="select-container">

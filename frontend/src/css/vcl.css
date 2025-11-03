@@ -72,7 +72,8 @@ input[type="text"]:hover {
     border-color: #cbd5e0;
 }
 
-select:focus, select:focus-within,
+select:focus,
+select:focus-within,
 input[type="text"]:focus {
     outline: none;
     border-color: #318231;
@@ -95,4 +96,9 @@ button {
     background-color: #276b27;
     border-radius: 14px;
     color: white;
+}
+
+input[type="text"].error {
+    border-color: red !important;
+    box-shadow: 0 0 3px 2px #FF000033 !important;
 }

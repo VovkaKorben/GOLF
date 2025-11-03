@@ -29,7 +29,7 @@
 }
 
 .game_item_header>* {
-    border: 1px solid black;
+    /* border: 1px solid black; */
 }
 
 div.gi_place,

@@ -1,12 +1,13 @@
 body,
 input[type="text"],
 select,
-option, label {
+option,
+label {
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth"100;
+  font-variation-settings: "wdth" 100;
 }
 
 body {
@@ -17,7 +18,8 @@ body {
   box-sizing: border-box;
 }
 
-body *, html * {
+body *,
+html * {
   box-sizing: border-box;
 }
 
@@ -35,6 +37,14 @@ table {
   font-weight: 400;
 }
 
+.small_text {
+  font-size: 8px;
+}
+
 .green_text {
   color: green;
+}
+
+.nw {
+  white-space: nowrap;
 }
