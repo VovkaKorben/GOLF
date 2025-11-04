@@ -13,7 +13,13 @@ function isFloatString(str) {
     return float_regex.test(str)
 }
 
-const NumInput = ({ allowFloat, className, style, changed_callback, tagname, initValue }) => {
+const NumInput = ({ allowFloat,
+    className,
+    style,
+    changed_callback,
+    initValue = null,
+    edit_index = 0
+}) => {
     const [value, setValue] = useState('');
     const [ErrorClass, setErrorClass] = useState('');
 
@@ -41,8 +47,8 @@ const NumInput = ({ allowFloat, className, style, changed_callback, tagname, ini
                     retval = parseFloat(newValue)
                 else
                     retval = parseInt(newValue);
-                console.log(`retval value: ${typeof retval}, <${retval}>`);
-                changed_callback(tagname, retval);
+                // console.log(`retval value: ${typeof retval}, <${retval}>`);
+                changed_callback(retval, edit_index);
             }
         }
         else

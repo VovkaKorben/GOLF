@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const ModeSelect = ({ changed_callback, tagname, style, initValue = null }) => {
+const ModeSelect = ({ changed_callback, style, initValue = null }) => {
     const [value, setValue] = useState('');
     const selector_data = [
         { 'id': '0', 'caption': 'Lyöntipeli (Stroke play)' },
@@ -13,10 +13,14 @@ const ModeSelect = ({ changed_callback, tagname, style, initValue = null }) => {
         const newValue = event.target.value;
         setValue(newValue);
         if (changed_callback)
-            changed_callback(tagname, newValue.trim() === '' ? null : parseInt(newValue));
+            // changed_callback( newValue.trim() === '' ? null : parseInt(newValue));
+            changed_callback(newValue === "" ? null : parseInt(newValue, 10));
     };
 
-    useEffect(() => { setValue(initValue ? initValue : ''); }, [initValue]);
+    useEffect(() => {
+        setValue(initValue ? initValue : '');
+        setValue(initValue !== null && initValue !== undefined ? initValue.toString() : "");
+    }, [initValue]);
 
     return (
         <div className="select-container">

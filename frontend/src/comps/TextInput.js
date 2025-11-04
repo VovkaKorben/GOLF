@@ -6,7 +6,7 @@ const TextInput = ({
     caption,
 
     changed_callback,
-    tagname,
+    
     placeholder,
     initValue = null
 }) => {
@@ -20,7 +20,7 @@ const TextInput = ({
         const newValue = event.target.value;
         setValue(newValue);
         if (changed_callback)
-            changed_callback(tagname, newValue);
+            changed_callback( newValue);
 
     };
 

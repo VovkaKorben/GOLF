@@ -197,3 +197,66 @@ import TeeSelect from './comps/TeeSelect.js';
 import ModeSelect from './comps/ModeSelect.js';
 import TextInput from './comps/TextInput.js';
 import GenderSelect from './comps/GenderSelect.js';
+
+
+
+function get_svg(fill_color) {
+  return (
+    <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+      <circle
+        cx="10" cy="10"
+        r="9"
+        fill={fill_color}
+        stroke="black"
+        stroke-width="1"
+        shapeRendering="geometricPrecision"
+      />
+    </svg>);
+}
+
+
+
+
+        const load_data = async () => {
+
+            const data = init_data()
+            data.base = { placeID, teeID, genderID, modeID, ehcp, strokes };
+
+            if (placeID !== null) {
+
+                // load PAR/HCP for place
+                const resp1 = await fetch(`${API_BASE_URL}pits/${placeID}`);
+                const data1 = await resp1.json();
+                for (const value of data1) {
+                    data.hcp[value.pit_no] = value.hcp;
+                    data.par[value.pit_no] = value.par;
+                }
+
+                // load distance for PLACE + TEE
+                if (teeID !== null) {
+
+                    const resp2 = await fetch(`${API_BASE_URL}tee/${placeID}/${teeID}`);
+                    const data2 = await resp2.json();
+
+                    for (const value of data2)
+                        data.distance[value.pit_no] = value.distance;
+
+                    // load cr/slope for PLACE + TEE + GENDER
+                    if (genderID !== null) {
+                        const resp3 = await fetch(`${API_BASE_URL}crslope/${placeID}/${teeID}/${genderID}`);
+                        const data3 = await resp3.json();
+
+                        if (data3.length > 0) {
+                            data.cr = data3[0].cr;
+                            data.slope = data3[0].slope;
+                        }
+
+
+                    }
+                }
+
+
+            }
+            setGameData(data);
+        };
+        load_data();

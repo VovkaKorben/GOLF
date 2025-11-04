@@ -118,7 +118,7 @@ app.get('/api/place/:place_id', async (req, res) => {
 // get HCP/PAR values from place by place_id
 app.get('/api/pits/:place_id', async (req, res) => {
   await handleDatabaseRequest(
-    res, 'SELECT * FROM places WHERE place_id=?', [req.params.place_id]
+    res, 'SELECT pit_no,par,hcp FROM pits WHERE place_id=?', [req.params.place_id]
   );
 });
 
@@ -129,7 +129,12 @@ app.get('/api/tee/:place_id/:tee_id', async (req, res) => {
     res, 'SELECT pit_no,distance FROM tees WHERE place_id=? AND tee_id=?', [req.params.place_id, req.params.tee_id]
   );
 });
-
+// get cr/slope by place_id + tee_id + gender_id
+app.get('/api/crslope/:place_id/:tee_id/:gender_id', async (req, res) => {
+  await handleDatabaseRequest(
+    res, 'SELECT cr,slope FROM places_info WHERE place_id=? AND tee_id=? AND gender_id=?', [req.params.place_id, req.params.tee_id, req.params.gender_id]
+  );
+});
 // get games list, pagination allowed (start / count)
 app.get('/api/games', async (req, res) => {
   const start = parseInt(req.query.start, 10) || 0;
@@ -147,10 +152,40 @@ app.get('/api/game/:game_id', async (req, res) => {
 });
 
 
+// get strokes for game_id
+app.get('/api/strokes/:game_id', async (req, res) => {
+  await handleDatabaseRequest(
+    res, 'SELECT pit_no,stroke FROM strokes WHERE game_id = ?', [req.params.game_id]
+  );
+});
+
+
+
+
+// PUT strokes for game_od
+app.put('/api/strokes/:game_id', async (req, res) => {
+
+  const params = [];
+  for (let hole = 1; hole <= 18; hole++) {
+    params.push(req.params.game_id, hole, req.body[hole]);
+  }
+  let query_string =
+    'INSERT INTO strokes (game_id, pit_no, stroke) VALUES ' +
+    Array(18).fill('(?,?,?)').join(',') +
+    ' ON DUPLICATE KEY UPDATE stroke = VALUES(stroke)';
+
+  // console.log(` put strokes : ${JSON.stringify(params)}`);
+  // console.log(` query_string : ${JSON.stringify(query_string)}`);
+
+  await handleExecRequest(res, query_string, params);
+  res.status(200).end();
+});
+
+
 // create game
 app.post('/api/game', async (req, res) => {
   const { place_id, mode_id, tee_id, gender_id, judge_text, comment_text, ehcp } = req.body;
-// console.log(`create game: ${JSON.stringify(req.body)}`);
+  // console.log(`create game: ${JSON.stringify(req.body)}`);
   const result = await handleExecRequest(res,
     'INSERT INTO games ( place_id, mode_id, tee_id, gender_id, judge, comment, ehcp) VALUES (?,?,?,?,?,?,?)',
     [place_id, mode_id, tee_id, gender_id, judge_text, comment_text, ehcp]);
@@ -167,7 +202,7 @@ app.put('/api/game', async (req, res) => {
     'UPDATE games SET place_id = ?,mode_id=?, tee_id = ?,gender_id =?, judge = ?, comment = ?,ehcp=? WHERE game_id = ?',
     [place_id, mode_id, tee_id, gender_id, judge_text, comment_text, ehcp, game_id]
   );
-  res.status(200);
+  res.status(200).end();
 });
 
 // DELETE game by ID
@@ -176,7 +211,7 @@ app.delete('/api/game', async (req, res) => {
   // console.log(`  app.delete game_id: ${JSON.stringify(game_id)}`);
 
   await handleExecRequest(res, 'DELETE FROM games WHERE game_id = ?', [game_id]);
-  res.status(200);
+  res.status(200).end();
 });
 
 

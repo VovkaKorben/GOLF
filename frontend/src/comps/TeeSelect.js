@@ -2,38 +2,31 @@ import React, { useEffect, useState } from "react";
 
 
 
-const TeeSelect = ({ changed_callback, tagname, style, initValue }) => {
-    const [value, setValue] = useState('');
+const TeeSelect = ({ changed_callback, style, initValue }) => {
+    const [value, setValue] = useState("");
 
     const selector_data = [
-        { 'id': 0, 'caption': 'White', 'color': 'white' },
-        { 'id': 1, 'caption': 'Yellow', 'color': 'yellow' },
-        { 'id': 2, 'caption': 'Blue', 'color': 'blue' },
-        { 'id': 3, 'caption': 'Red', 'color': 'red' }
+        { 'id': "0", 'caption': 'White', 'color': 'white' },
+        { 'id': "1", 'caption': 'Yellow', 'color': 'yellow' },
+        { 'id': "2", 'caption': 'Blue', 'color': 'blue' },
+        { 'id': "3", 'caption': 'Red', 'color': 'red' }
     ];
 
-    function get_svg(fill_color) {
-        return (
-            <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
-                <circle
-                    cx="10" cy="10"
-                    r="9"
-                    fill={fill_color}
-                    stroke="black"
-                    stroke-width="1"
-                    shapeRendering="geometricPrecision"
-                />
-            </svg>);
-    }
 
     const onChange = (event) => {
+
         const newValue = event.target.value;
+        console.log(`tee onChange: ${newValue}`);
         setValue(newValue);
         if (changed_callback)
-            changed_callback(tagname, newValue.trim() === '' ? null : parseInt( newValue));
+            // changed_callback(newValue.trim() === '' ? null : parseInt(newValue));
+            changed_callback(newValue === "" ? null : parseInt(newValue, 10));
     };
 
-   useEffect(() => { setValue(initValue ? initValue : ''); }, [initValue]);
+    useEffect(() => {
+        // setValue(initValue ? initValue : ''); 
+        setValue(initValue !== null && initValue !== undefined ? initValue.toString() : "");
+    }, [initValue]);
 
     return (
         <div className="select-container">
@@ -47,7 +40,6 @@ const TeeSelect = ({ changed_callback, tagname, style, initValue }) => {
                 <option value="" >Select</option>
                 {selector_data.map((data) => (
                     <option key={data.id} value={data.id}>
-                        {/* {get_svg(data.color)}<span>{data.caption}</span> */}
                         {data.caption}
                     </option>
                 ))}

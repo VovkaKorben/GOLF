@@ -12,11 +12,18 @@
         "t1 t1 t1 t1"
         "t2 t2 t2 t2"
         "ae1 ae1 b1 b2"
-        "ae2 ae2 b1 b2";
+        "ae2 ae2 b1 b2"
+        "dbg dbg dbg dbg";
+
 }
 
 .editor-cont>div {
     /* border: 1px dashed rgba(0, 220, 95, 0.882); */
+}
+
+.dbg {
+    grid-area: dbg;
+    font-size: 20px;
 }
 
 .h1 {
@@ -72,6 +79,52 @@ table.result_input {
 
 table.result_input td {
     border: 1px solid black;
-    width:8.333%;
+    width: 8.333%;
     text-align: center;
+    padding: 2px 0px;
+}
+
+
+tr.hdr {
+    color: white;
+    background-color: #3e444b;
+}
+
+tr.reika {
+    background-color: #dfe1e4;
+}
+
+tr.par {
+    background-color: #9b9b9b;
+    color: white;
+}
+
+tr.other {
+    background-color: #ffffff;
+}
+
+tr.tee0 {
+    background-color: rgb(230, 230, 230);
+}
+
+tr.tee1 {
+    background-color: rgb(240, 243, 78);
+}
+
+tr.tee2 {
+    background-color: rgb(141, 128, 255);
+}
+
+tr.tee3 {
+    background-color: rgb(255, 43, 43);
+}
+
+.square{
+  width: 35px;
+  height: 35px;
+  /* margin: 5px 0px 5px 0px; */
+  text-align: center;
+  font-weight: 600;
+ font-size: large;
+  padding: 0px !important;
 }

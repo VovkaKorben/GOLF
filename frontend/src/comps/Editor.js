@@ -16,19 +16,16 @@ import TextInput from './TextInput.js';
 import GenderSelect from './GenderSelect.js';
 import Btn from './Btn.js';
 
-const InputTable = ({ tableIndex, gameData }) => {
+import { get_sum, null18, init_data, calc1 } from '../calculation.js';
 
+const InputTable = ({ tableIndex, gameData, changed, initValue }) => {
 
+    // useEffect(() => {        console.log(JSON.stringify(initValue));    }, [initValue]);
 
-
-
-
-
-
+    const result_changed = (value, index) => { if (changed) changed(value, index); };
 
     const col_first = ['REIKÄ', 'PITUUS', 'PAR', 'LYÖNNIT', 'HCP', 'NET.']
     const col_last = [['ULOS', ''], ['SISÄÄN', 'YHT.']]
-
     const rowsArray = [];
 
     if (tableIndex === 0)
@@ -37,7 +34,7 @@ const InputTable = ({ tableIndex, gameData }) => {
     for (let r = 0; r <= 5; r++) {
         const colsArray = [];
         for (let c = 0; c <= 11; c++) {
-            let t = 'x';
+            let t = '';
 
             // first column messages
             if (c === 0)
@@ -50,20 +47,66 @@ const InputTable = ({ tableIndex, gameData }) => {
             // pit index + values + edits
             else if (c >= 1 && c <= 9) {
                 let pit_index = tableIndex * 9 + c
+                // pit number
                 if (r === 0)
                     t = pit_index
+
+                // tee distance
+                if (r === 1)
+                    t = gameData.distance[pit_index]
+                // PAR
+                else if (r === 2)
+                    t = gameData.par[pit_index]
+                // INPUTS
+                else if (r === 3)
+                    t = <NumInput
+                        className="square" allowFloat={false}
+                        edit_index={pit_index}
+                        changed_callback={result_changed}
+                        initValue={initValue[pit_index]}
+                    />
+
+                // HCP
+                else if (r === 4)
+                    t = gameData.hcp[pit_index]
+
+            }
+            else if (c === 10) {
+                const s = tableIndex * 9 + 1, e = s + 8;
+                // distance sum
+                if (r === 1)
+                    t = get_sum(gameData.distance, s, e, true)
+                // par sum
+                else if (r === 2)
+                    t = get_sum(gameData.par, s, e, true)
+            }
+            else if (tableIndex === 1 && c === 11) {
+                // distance ALL sum 
+                if (r === 1)
+                    t = get_sum(gameData.distance, 1, 18, true)
+                // par ALL sum
+                else if (r === 2)
+                    t = get_sum(gameData.par, 1, 18, true)
+
+
             }
             colsArray.push(<td key={c}>{t}</td>)
         }
 
 
         let trclass = 'other';
-
+        if (r === 0)
+            trclass = 'reika'
+        if (r === 1 && gameData.base.teeID !== null)
+            trclass = `tee${gameData.base.teeID}`
+        if (r === 2)
+            trclass = 'par'
 
         rowsArray.push(<tr className={trclass} key={r}>{colsArray}</tr>)
     }
     return (
-        <>{JSON.stringify(gameData)}<br />
+        <>
+            {/* <span className="small_text wr">                {JSON.stringify(gameData)}            </span>            <br /> */}
             <table key={tableIndex} className='result_input'><tbody>{rowsArray}</tbody></table>
         </>
     );
@@ -93,43 +136,29 @@ const Editor = () => {
     const [modeID, setModeID] = useState(null);
     const [teeID, setTeeID] = useState(null);
     const [genderID, setGenderID] = useState(null);
-
-
     const [ehcp, setEHCP] = useState(null);
     const [judge_text, setJudge] = useState('');
     const [comment_text, setComment] = useState('');
-
-    const [CrSlope, setCrSlope] = useState(null);
-
-
+    const [strokes, setStrokes] = useState(null18());
 
     const [dbg, setDbg] = useState('');
 
-    const place_changed = (tagname, value) => { setPlaceID(value); };
-    const mode_changed = (tagname, value) => { setModeID(value); };
-    const tee_changed = (tagname, value) => { setTeeID(value); };
-    const gender_changed = (tagname, value) => { setGenderID(value); };
-    const ehcp_changed = (tagname, value) => { setEHCP(value); };
-    const comment_changed = (tagname, value) => { setComment(value); };
-    const judge_changed = (tagname, value) => { setJudge(value); };
+    const place_changed = (value) => { setPlaceID(value); };
+    const mode_changed = (value) => { setModeID(value); };
+    const tee_changed = (value) => { setTeeID(value); };
+    const gender_changed = (value) => { setGenderID(value); };
+    const ehcp_changed = (value) => { setEHCP(value); };
+    const comment_changed = (value) => { setComment(value); };
+    const judge_changed = (value) => { setJudge(value); };
 
-    const game_datajudge_changed = (tagname, value) => { setJudge(value); };
-    const [gameData, setGameData] = useState({
-        cr: null, slope: null,
-        game_level: null,
-        stroke: {},
-        par: {},
-        hcp: {},
-        distance: {},
-        place_id: null, mode_id: null, tee_id: null, gender_id: null, ehcp: null,
-
-    });
+    // const game_datajudge_changed = ( value) => { setJudge(value); };
+    const [gameData, setGameData] = useState(init_data());
 
 
     const save_clicked = () => {
 
         const save_game = async () => {
-            const gameData = {
+            const params = {
                 place_id: placeID,
                 mode_id: modeID,
                 tee_id: teeID,
@@ -141,39 +170,36 @@ const Editor = () => {
             }
 
             try {
-
                 // if we have game_id ? update data : create game
-                if (gameID) {
-                    // update game
+                if (gameID) {   // update game
                     const resp = await fetch(`${API_BASE_URL}game`, {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(gameData)
+                        headers: { 'Content-Type': 'application/json', },
+                        body: JSON.stringify(params)
                     });
-                    const data = await resp.json();
-
-                } else  //  create game
-                {
-
+                } else { //  create game
                     const resp = await fetch(`${API_BASE_URL}game`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(gameData)
+                        headers: { 'Content-Type': 'application/json', },
+                        body: JSON.stringify(params)
                     });
                     const data = await resp.json();
-                    gameData.game_id = data.insertId;
+                    // update game_id to real value
+                    params.game_id = data.insertId;
                 }
 
                 // save all game strokes
+                const resp2 = await fetch(`${API_BASE_URL}strokes/${params.game_id}`, {
+
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', },
+                    body: JSON.stringify(strokes)
+                });
 
 
                 // if not existing game id -> move to new address
                 if (!gameID)
-                    navigate(`/game/${gameData.game_id}`)
+                    navigate(`/game/${params.game_id}`)
 
             } catch (error) {
                 console.error('Ошибка:', error);
@@ -188,44 +214,26 @@ const Editor = () => {
     const return_clicked = () => {
         navigate('/')
     };
-
-    // useEffect(() => { console.log(`useEffect gameID: ${gameID}`); }, [gameID]);
-
-    // place changed, read place data from DB
+    const stroke_changed = (value, index) => {
+        setStrokes(prev => ({ ...prev, [index]: value }));
+    };
     useEffect(() => {
-        const place_changed = async () => {
-            console.log(`placeID changed: ${placeID}`);
-            const resp = await fetch(`${API_BASE_URL}pits/${placeID}`);
-            const data = await resp.json();
-            setDbg(JSON.stringify(data));
-        };
-        place_changed();
-    }, [placeID]);
+        setDbg(JSON.stringify(gameData, null, 2));
+    }, [gameData]);
 
-    // CR/Slope
+    // recalculate results
     useEffect(() => {
-        const calc_CrSlope = async () => {
-            /*console.log(`placeID changed: ${placeID}`);
-            const resp = await fetch(`${API_BASE_URL}pits/${placeID}`);
-            const data = await resp.json();
-            setDbg(JSON.stringify(data));
-            */
-            setCrSlope({ cr: 1, slope: 2 })
-            console.log(`setCrSlope SET`);
+        // const r = await calc1({ placeID, teeID, genderID, modeID, ehcp, strokes });        console.log(JSON.stringify(r));
+        const calculate = async () => {
+            try {
+                const r = await calc1({ placeID, teeID, genderID, modeID, ehcp, strokes });
+                console.log('Calculation result:', r);
+            } catch (error) {
+                console.error('Calculation error:', error);
+            }
         };
-        console.log(`**************`);
-        console.log(`placeID: ${placeID}`);
-        console.log(`teeID: ${teeID}`);
-        console.log(`genderID: ${genderID}`);
-
-        if ((placeID !== null) && (teeID !== null) && (genderID !== null))
-            calc_CrSlope();
-        else {
-            setCrSlope(null)
-            console.log(`setCrSlope null`);
-        }
-
-    }, [placeID, teeID, genderID]);
+        calculate();
+    }, [placeID, teeID, genderID, modeID, ehcp, strokes]);
 
 
     // load game params from DB
@@ -237,13 +245,11 @@ const Editor = () => {
                 const resp = await fetch(`${API_BASE_URL}game/${game_id}`);
                 let data = await resp.json();
 
-                // console.log(`load game params from DB: ${JSON.stringify(data)}`);
                 if (resp.status === 404) {
                     setGameNotFound(true);
                     return;
                 }
                 data = data[0]
-                // console.log(`fetch_game_id: ${JSON.stringify(data)}`)
 
                 setGameID(data.game_id);
 
@@ -255,10 +261,19 @@ const Editor = () => {
                 setModeID(data.mode_id);
                 setTeeID(data.tee_id);
                 setGenderID(data.gender_id);
+                setGameData(init_data());
 
+                // fetch strokes for game
+                const resp2 = await fetch(`${API_BASE_URL}strokes/${game_id}`);
+                const data2 = await resp2.json();
+                setStrokes(null18());
 
-                // setEHCP(data.place_id);
-
+                // fill only existsing values
+                for (const s of data2)
+                    setStrokes(prev => ({
+                        ...prev,
+                        [s.pit_no]: s.stroke
+                    }));
 
 
             } catch (error) {
@@ -277,7 +292,7 @@ const Editor = () => {
     return (
         <div className="editor-cont">
 
-            <div> Dbg: {dbg}<br />Game ID: {gameID}</div>
+            <pre className="dbg wr" > Dbg: {dbg}<br />Game ID: {gameID}</pre>
             <div
                 className="h1 flex_row_left_center"
                 style={{ borderBottom: "1px solid #999", paddingBottom: "15px" }}
@@ -323,13 +338,16 @@ const Editor = () => {
                 <InputTable
                     tableIndex={0}
                     gameData={gameData}
+                    changed={stroke_changed}
+                    initValue={strokes}
                 />
-                {/* {CrSlope && <>{CrSlope.cr} / {CrSlope.slope}</>} */}
             </div>
             <div className="t2 flex_col_center_center">
                 <InputTable
                     tableIndex={1}
                     gameData={gameData}
+                    changed={stroke_changed}
+                    initValue={strokes}
                 />
             </div>
 

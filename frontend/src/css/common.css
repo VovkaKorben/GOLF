@@ -48,3 +48,8 @@ table {
 .nw {
   white-space: nowrap;
 }
+
+.wr {
+  white-space: normal;
+   /* word-break: break-all; */
+}

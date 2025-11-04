@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API_BASE_URL from '../consts.js';
 
-const PlaceSelect = ({ changed_callback, tagname, className, initValue }) => {
+const PlaceSelect = ({ changed_callback, className, initValue }) => {
     const [value, setValue] = useState('');
 
     const [places, setPlaces] = useState([]);
@@ -32,14 +32,18 @@ const PlaceSelect = ({ changed_callback, tagname, className, initValue }) => {
 
     //useEffect(() => {         console.log(`PlaceSelect selectedPlace: ${selectedPlace}`); },         [selectedPlace]);
 
-    useEffect(() => { setValue(initValue ? initValue : ''); }, [initValue]);
+    useEffect(() => {
+        // setValue(initValue ? initValue : ''); 
+        setValue(initValue !== null && initValue !== undefined ? initValue.toString() : "");
+    }, [initValue]);
 
     const onChange = (event) => {
         const newValue = event.target.value;
         setValue(newValue);
         // console.log(`PlaceSelect: ${newValue}`);
         if (changed_callback)
-            changed_callback(tagname, newValue.trim() === '' ? null : parseInt(newValue));
+            // changed_callback(newValue.trim() === '' ? null : parseInt(newValue, 10));
+            changed_callback(newValue === "" ? null : parseInt(newValue, 10));
     };
 
     // if (loading) return <div>Loading places...</div>;
