@@ -14,6 +14,7 @@ const init_data = () => {
             tee_id: null,
             gender_id: null,
             strokes: null18(),
+            strokes2: null18(),
         },
 
         output: {
@@ -116,12 +117,23 @@ const calc1 = async (input) => {
                             output.result_lvl = output.result_lvl.toFixed(1);
                             break;
                         }
+                        case 1:
+                            { // Reikäpeli (Match play)
+                                // console.log(`Reikäpeli: ${JSON.stringify(input)}`);
+                                for (let pit_no = 1; pit_no <= pit_count; pit_no++)
+                                    if ((input.strokes[pit_no] !== null) && (input.strokes2[pit_no] !== null)) {
+
+                                        output.result[pit_no] =Math.sign( input.strokes[pit_no] - input.strokes2[pit_no]);
+
+                                    }
+                                break;
+                            }
                         case 2: { // Pistebogey (Bogey play)
                             const bonus_pits = pit_count - output.player_handicap;
                             const hcp = Object.values(output.hcp);
                             const hcp_sorted = hcp.sort((a, b) => b - a);
                             const min_bonus = hcp_sorted[bonus_pits];
-                            // console.log(`Pistebogey hcp_sorted: ${JSON.stringify(hcp_sorted)}`);
+
                             for (let pit_no = 1; pit_no <= pit_count; pit_no++)
                                 if (input.strokes[pit_no] !== null) {
 
@@ -129,6 +141,15 @@ const calc1 = async (input) => {
                                     tmp = 2 - (input.strokes[pit_no] - tmp);
                                     output.result[pit_no] = tmp;
                                 }
+
+                            break;
+                        }
+                        case 3: { // Scratch (Stroke play)
+                            for (let pit_no = 1; pit_no <= pit_count; pit_no++)
+                                if (input.strokes[pit_no] !== null) {
+                                    output.result[pit_no] = input.strokes[pit_no];
+                                }
+
 
                             break;
                         }

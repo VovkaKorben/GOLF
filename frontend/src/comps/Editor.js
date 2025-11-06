@@ -20,7 +20,7 @@ import { get_sum, null18, init_data, calc1 } from '../calculation.js';
 
 const InputTable = ({ tableIndex, game_values, changed }) => {
 
-    // useEffect(() => {        console.log(JSON.stringify(initValue));    }, [initValue]);
+
 
     // console.log(JSON.stringify(gameData, null, 2));
     // console.log(`game_values: ${JSON.stringify(game_values, null, 2)}`);
@@ -66,21 +66,33 @@ const InputTable = ({ tableIndex, game_values, changed }) => {
                 else if (r === 2)
                     t = game_values.output.par[pit_index]
                 // INPUTS
-                else if (r === 3)
-                    t = <NumInput
+                else if (r === 3) {
+                    t = [<NumInput
                         className="square" allowFloat={false}
+                        key={pit_index}
                         edit_index={pit_index}
                         changed_callback={result_changed}
                         initValue={game_values.input.strokes[pit_index]}
-                    />
-
+                    />]
+                    if (game_values.input.mode_id === 1)
+                        t.push(<br key={pit_index + 36} />,
+                            <NumInput
+                                key={pit_index + 18}
+                                className="square" allowFloat={false}
+                                edit_index={pit_index + 18}
+                                changed_callback={result_changed}
+                                initValue={game_values.input.strokes2[pit_index]}
+                            />)
+                }
                 // HCP
                 else if (r === 4)
                     t = game_values.output.hcp[pit_index]
                 // RESULTS
-                else if (r === 5)
+                else if (r === 5) {
                     t = game_values.output.result[pit_index]
-
+                    if (game_values.input.mode_id === 1 && t == 0)
+                        t = '•'
+                }
             }
             else if (c === 10) {
                 const s = tableIndex * 9 + 1, e = s + 8;
@@ -91,8 +103,11 @@ const InputTable = ({ tableIndex, game_values, changed }) => {
                 else if (r === 2)
                     t = get_sum(game_values.output.par, s, e, true)
                 // stroke sum
-                else if (r === 3)
+                else if (r === 3) {
                     t = get_sum(game_values.input.strokes, s, e, true)
+                    if (game_values.input.mode_id === 1)
+                        t = `${t} / ${get_sum(game_values.input.strokes2, s, e, true)}`
+                }
                 // result sum
                 else if (r === 5)
                     t = get_sum(game_values.output.result, s, e, true)
@@ -105,8 +120,11 @@ const InputTable = ({ tableIndex, game_values, changed }) => {
                 else if (r === 2)
                     t = get_sum(game_values.output.par, 1, 18, true)
                 // stroke ALL sum
-                else if (r === 3)
+                else if (r === 3) {
                     t = get_sum(game_values.input.strokes, 1, 18, true)
+                    if (game_values.input.mode_id === 1)
+                        t = `${t} / ${get_sum(game_values.input.strokes2, 1, 18, true)}`
+                }
                 // result ALL sum
                 else if (r === 5)
                     t = get_sum(game_values.output.result, 1, 18, true)
@@ -151,6 +169,7 @@ const Editor = () => {
     const [judge_text, setJudge] = useState('');
     const [comment_text, setComment] = useState('');
     const [strokes, setStrokes] = useState(null18());
+    const [strokes2, setStrokes2] = useState(null18());
 
     const [dbg, setDbg] = useState('');
 
@@ -199,11 +218,18 @@ const Editor = () => {
                 }
 
                 // save all game strokes
+                const collect_strokes = strokes;
+                if (params.mode_id === 1) {
+                    for (let pit_no = 1; pit_no <= 18; pit_no++)
+                        collect_strokes[pit_no + 18] = strokes2[pit_no];
+                }
+                // console.log(` collect_strokes : ${JSON.stringify(collect_strokes)}`);
+
                 const resp2 = await fetch(`${API_BASE_URL}strokes/${params.game_id}`, {
 
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', },
-                    body: JSON.stringify(strokes)
+                    body: JSON.stringify(collect_strokes)
                 });
 
 
@@ -224,8 +250,18 @@ const Editor = () => {
     const return_clicked = () => {
         navigate('/')
     };
+
+    useEffect(() => {
+        // console.log(`setStrokes : ${JSON.stringify(strokes)}`);
+        // console.log(`setStrokes : ${JSON.stringify(strokes2)}`);
+        // console.log(JSON.stringify(initValue));   
+
+    }, [strokes, strokes2]);
     const stroke_changed = (value, index) => {
-        setStrokes(prev => ({ ...prev, [index]: value }));
+        if (index <= 18)
+            setStrokes(prev => ({ ...prev, [index]: value }))
+        else
+            setStrokes2(prev => ({ ...prev, [index - 18]: value }));
     };
     useEffect(() => {
         // setDbg(JSON.stringify(gameData, null, 2));
@@ -235,7 +271,7 @@ const Editor = () => {
     useEffect(() => {
         const calculate = async () => {
             try {
-                const r = await calc1({ place_id, tee_id, gender_id, mode_id, ehcp, strokes });
+                const r = await calc1({ place_id, tee_id, gender_id, mode_id, ehcp, strokes, strokes2 });
                 // console.log('Calculation result:', r);
                 setGameData(r);
 
@@ -244,7 +280,7 @@ const Editor = () => {
             }
         };
         calculate();
-    }, [place_id, tee_id, gender_id, mode_id, ehcp, strokes]);
+    }, [place_id, tee_id, gender_id, mode_id, ehcp, strokes, strokes2]);
 
 
     // load game params from DB
@@ -278,13 +314,16 @@ const Editor = () => {
                 const resp2 = await fetch(`${API_BASE_URL}strokes/${data.game_id}`);
                 const data2 = await resp2.json();
                 setStrokes(null18());
+                setStrokes2(null18());
 
                 // fill only existsing values
                 for (const s of data2)
-                    setStrokes(prev => ({
-                        ...prev,
-                        [s.pit_no]: s.stroke
-                    }));
+                    if (s.pit_no <= 18)
+                        setStrokes(prev => ({ ...prev, [s.pit_no]: s.stroke }))
+                    else
+                        setStrokes2(prev => ({ ...prev, [s.pit_no - 18]: s.stroke }));
+
+                // console.log(`setStrokes : ${JSON.stringify(strokes)}`);
             } catch (error) {
                 console.error('Ошибка:', error);
             }

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 function GameItem({ game_params, onDelete }) {
     const navigate = useNavigate();
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(false);
     // const [game_params, setGameParams] = useState(init_data());
 
 

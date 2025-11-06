@@ -167,19 +167,20 @@ app.get('/api/strokes/:game_id', async (req, res) => {
 // PUT strokes for game_od
 app.put('/api/strokes/:game_id', async (req, res) => {
 
+  // console.log(` req.params : ${JSON.stringify(req.body)}`);
   const params = [];
-  for (let hole = 1; hole <= 18; hole++) {
-    params.push(req.params.game_id, hole, req.body[hole]);
-  }
+  Object.keys(req.body).forEach(key => {
+    if (req.body[key] !== null)
+      params.push(req.params.game_id, key, req.body[key]);
+  });
+
   let query_string =
     'INSERT INTO strokes (game_id, pit_no, stroke) VALUES ' +
-    Array(18).fill('(?,?,?)').join(',') +
+    Array(params.length / 3).fill('(?,?,?)').join(',') +
     ' ON DUPLICATE KEY UPDATE stroke = VALUES(stroke)';
 
-  // console.log(` put strokes : ${JSON.stringify(params)}`);
-  // console.log(` query_string : ${JSON.stringify(query_string)}`);
-
   await handleExecRequest(res, query_string, params);
+  //console.log(` query_string : ${JSON.stringify(query_string)}`);
   res.status(200).end();
 });
 

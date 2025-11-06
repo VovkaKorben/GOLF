@@ -48,7 +48,7 @@ function ResultTable({ game_params }) {
 
 
         rowsArray.push(<tr className="gi_row0" key={0}><td colSpan={22}>
-            {game_params.mode_id && mode_selector_data[game_params.mode_id].caption}
+            {game_params.mode_id!==null && mode_selector_data[game_params.mode_id].caption}
             {/* {`game_params: ${JSON.stringify(game_params)}`} */}
         </td></tr>)
 
