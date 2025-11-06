@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-
+import { mode_selector_data } from '../consts.js';
 const ModeSelect = ({ changed_callback, style, initValue = null }) => {
     const [value, setValue] = useState('');
-    const selector_data = [
-        { 'id': '0', 'caption': 'Lyöntipeli (Stroke play)' },
-        { 'id': '1', 'caption': 'Reikäpeli (Match play)' },
-        { 'id': '2', 'caption': 'Pistebogey (Bogey play)' },
-        { 'id': '3', 'caption': 'Scratch (Stroke play)' }
-    ];
+
 
     const onChange = (event) => {
         const newValue = event.target.value;
@@ -31,8 +26,8 @@ const ModeSelect = ({ changed_callback, style, initValue = null }) => {
                 value={value}
             >
                 <option value="" >Select</option>
-                {selector_data.map((data) => (
-                    <option key={data.id} value={data.id}>
+                {mode_selector_data.map((data) => (
+                    <option key={data.id} value={data.id} disabled={!data.enabled}>
                         {data.caption}
                     </option>
                 ))}

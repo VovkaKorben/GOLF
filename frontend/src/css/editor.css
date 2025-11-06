@@ -11,6 +11,7 @@
         "e3 e3 e4 e4"
         "t1 t1 t1 t1"
         "t2 t2 t2 t2"
+        "tt tt tt tt"
         "ae1 ae1 b1 b2"
         "ae2 ae2 b1 b2"
         "dbg dbg dbg dbg";
@@ -70,6 +71,11 @@
     grid-area: b2;
 }
 
+.tt {
+    grid-area: tt;
+    font-weight: 700;
+}
+
 
 
 
@@ -119,12 +125,17 @@ tr.tee3 {
     background-color: rgb(255, 43, 43);
 }
 
-.square{
-  width: 35px;
-  height: 35px;
-  /* margin: 5px 0px 5px 0px; */
-  text-align: center;
-  font-weight: 600;
- font-size: large;
-  padding: 0px !important;
+tr.net {
+    font-weight: 600;
+    font-size: large;
+}
+
+.square {
+    width: 35px;
+    height: 35px;
+    /* margin: 5px 0px 5px 0px; */
+    text-align: center;
+    font-weight: 600;
+    font-size: large;
+    padding: 0px !important;
 }

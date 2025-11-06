@@ -146,12 +146,13 @@ div.gi_info {
 
 tr.gi_row0 {
     color: white;
-font-weight: 600;
+    font-weight: 600;
     background-color: #318231;
 }
 
 tr.gi_row1 {
-    color: lime;font-weight: 600;
+    color: lime;
+    font-weight: 600;
 }
 
 tr.gi_row2 {

@@ -45,7 +45,9 @@ const server = app.listen(API_PORT, () => {
 
 // sql wrapper
 const executeQuery = (query, params = []) => {
-  // console.log(`executeQuery: ${query}, ${params}`);
+  // const fullQuery = mysql.format(query, params);
+  // console.log(`📝 SQL Query: ${fullQuery}`);
+
 
   return new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {
@@ -213,6 +215,26 @@ app.delete('/api/game', async (req, res) => {
   await handleExecRequest(res, 'DELETE FROM games WHERE game_id = ?', [game_id]);
   res.status(200).end();
 });
+
+// get player handicap lvl for specified PLACE + TEE + GENDER + ExactHCP
+// test http://localhost:3500/api/lvl?place_id=1&gender_id=0&tee_id=0&ehcp=21.4
+app.get('/api/lvl', async (req, res) => {
+  try {
+    const ehcp = parseFloat(req.query.ehcp);
+    const place_id = parseInt(req.query.place_id, 10);
+    const tee_id = parseInt(req.query.tee_id, 10);
+    const gender_id = parseInt(req.query.gender_id, 10);
+    await handleDatabaseRequest(res,
+      'select lvl from places_lvl where place_id = ? and gender_id = ? and tee_id = ? and ?>=min_hcp and ?<=max_hcp',
+      [place_id, gender_id, tee_id, ehcp, ehcp]);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+
+
+  //  await handleDatabaseRequest(    res, 'SELECT pit_no,stroke FROM strokes WHERE game_id = ?', [req.params.game_id]  );
+});
+
 
 
 app.use(notFound);

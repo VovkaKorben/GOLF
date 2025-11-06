@@ -1,8 +1,6 @@
-
-
 import React, { useEffect, useState } from "react";
 import GameItem from './GameItem.js';
-import API_BASE_URL from '../consts.js';
+import { API_BASE_URL } from '../consts.js';
 import Btn from './Btn.js';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,7 +34,7 @@ const MainPage = ({ }) => {
                 });
                 const data = await resp.json();
 
-                
+
             } catch (error) {
                 console.error('Ошибка:', error);
             }
@@ -57,6 +55,7 @@ const MainPage = ({ }) => {
 
                 const resp = await fetch(`${API_BASE_URL}games?start=0`);
                 const data = await resp.json();
+                // console.log(`get_games_list: ${JSON.stringify(data)}`);
                 setGameList(data);
             } catch (error) {
                 console.error('Ошибка:', error);
@@ -68,23 +67,22 @@ const MainPage = ({ }) => {
 
     return (
 
-
+        // add new game button
         <div id="mainroot">
 
-            <div className='flex_row_right_center'
-                style={{ width: "100%" }}
-            >
+            <div className='flex_row_right_center' style={{ width: "100%" }}            >
                 <Btn
                     caption='Add'
                     icon='add'
                     onClicked={add_new_game}
                 />
             </div>
+            {/* game list container */}
             <div id='gamelist'>
-                {GameList.map((game) => (
-                    <GameItem
-                        key={game.game_id}
-                        game_data={game}
+                {GameList.map((game_item) => (
+                    < GameItem
+                        key={game_item.game_id}
+                        game_params={game_item}
                         onDelete={onDelete}
                     />
                 ))}

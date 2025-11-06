@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API_BASE_URL from '../consts.js';
+import {API_BASE_URL} from '../consts.js';
 
 const PlaceSelect = ({ changed_callback, className, initValue }) => {
     const [value, setValue] = useState('');

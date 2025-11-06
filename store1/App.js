@@ -38,7 +38,7 @@ export default function App() {
   });
   
   const [gameID, setGameID] = useState(null);
-  const [placeID, setPlaceID] = useState(null);
+  const [place_id, setPlaceID] = useState(null);
   const [genderID, setGenderID] = useState(null);
   const [teeID, setTeeID] = useState(null);
 
@@ -49,12 +49,12 @@ export default function App() {
   useEffect(() => {
     const doFetch = async () => {
       try {
-        console.log('placeID');
+        console.log('place_id');
         const hcp = null18();
         const par = null18();
 
-        if (placeID) {
-          const resp = await fetch(`${API_BASE_URL}pits/${placeID}`);
+        if (place_id) {
+          const resp = await fetch(`${API_BASE_URL}pits/${place_id}`);
           const data = await resp.json();
           for (const item of data) {
             hcp[item.pit_no] = item.hcp;
@@ -68,17 +68,17 @@ export default function App() {
       }
     };
     doFetch();
-  }, [placeID]);
+  }, [place_id]);
 
   useEffect(() => {
     const doFetch = async () => {
       try {
-        console.log('placeID + teeID');
+        console.log('place_id + teeID');
         const distance = null18();
 
         // try fetch distances
-        if (placeID && teeID) {
-          const resp = await fetch(`${API_BASE_URL}tee/${placeID}/${teeID}`);
+        if (place_id && teeID) {
+          const resp = await fetch(`${API_BASE_URL}tee/${place_id}/${teeID}`);
           const data = await resp.json();
           for (const item of data)
             distance[item.pit_no] = item.distance;
@@ -91,7 +91,7 @@ export default function App() {
     };
 
     doFetch();
-  }, [placeID, teeID]);
+  }, [place_id, teeID]);
 
   useEffect(() => {
     const evalHCP = async () => {
@@ -145,7 +145,7 @@ export default function App() {
             t = pit_index
           if (r === 1)
             t = XData['distance'][pit_index]
-          else if (r === 2 && placeID)
+          else if (r === 2 && place_id)
             t = XData['par'][pit_index]
           else if (r === 3)
             t =
@@ -154,7 +154,7 @@ export default function App() {
                 // changed_callback={result_changed}
                 tagname={tbl_index * 10 + c - 1}
               />
-          else if (r === 4 && placeID)
+          else if (r === 4 && place_id)
             t = XData['hcp'][pit_index]
         }
 

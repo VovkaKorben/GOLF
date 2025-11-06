@@ -20,7 +20,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<MainPage />} />
 
-      <Route path="/game/:game_id?" element={<Editor />} />
+      <Route path="/game/:url_game_id?" element={<Editor />} />
     </Routes>
 
 

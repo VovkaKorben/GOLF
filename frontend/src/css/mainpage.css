@@ -90,8 +90,9 @@ div.gi_info {
 }
 
 .game_result td {
-    border: 2px solid #000000;
+    border: 1px solid #00000011;
     width: 4.55%;
+    text-align: center;
 }
 
 /* remove external borders */
@@ -109,4 +110,37 @@ div.gi_info {
 
 .game_result td:last-child {
     border-right: none;
+}
+
+/* result table  itself */
+
+tr.gi_row0 {
+    color: white;
+    font-weight: 600;
+    background-color: #318231;
+}
+
+tr.gi_row1 {
+    /* color: lime; */
+    /* */
+}
+
+tr.gi_row2 {
+    background-color: #eee;
+
+}
+
+tr.gi_row4 {
+    /* color: blue; */
+    background-color: #eee;
+}
+
+.game_result td:nth-child(1),
+.game_result td:nth-child(11),
+.game_result td:nth-child(21),
+.game_result td:nth-child(22) {
+
+
+    /* background-color: red !important; */
+     font-weight: 600;
 }
